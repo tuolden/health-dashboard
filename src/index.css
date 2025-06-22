@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles optimized for vertical screens */
+@layer base {
+  html {
+    /* Prevent horizontal scrolling on vertical screens */
+    overflow-x: hidden;
+    /* Optimize for vertical scrolling */
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    /* Ensure full height utilization on vertical screens */
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+    /* Prevent horizontal overflow */
+    overflow-x: hidden;
+    /* Optimize text rendering for vertical reading */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Design System - Updated background and font colors */
+    background-color: theme('colors.app-background');
+    color: theme('colors.font-primary');
+  }
+
+  /* Ensure root container uses full vertical space */
+  #root {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Component layer for reusable widget styles */
+@layer components {
+  /* Widget Components */
+  .widget-container {
+    @apply bg-widget-default rounded-widget shadow-widget p-4 transition-all duration-200;
+  }
+
+  .widget-container:hover {
+    @apply hover:shadow-widget-hover;
+  }
+
+  .widget-title {
+    @apply text-widget-title mb-3;
+  }
+
+  .widget-value {
+    @apply text-metric;
+  }
+
+  .widget-subtitle {
+    @apply text-label text-mutedText;
+  }
+  
+  /* Navigation optimized for vertical screens */
+  .nav-container {
+    @apply fixed top-0 left-0 right-0 z-50 bg-widget-default shadow-nav;
+    height: 4rem;
+  }
+
+  /* Main content area accounting for fixed nav */
+  .main-content {
+    margin-top: 4rem;
+    @apply px-4 py-8;
+  }
+
+  /* Grid system for vertical layout */
+  .dashboard-grid {
+    @apply grid gap-4;
+    /* Default to single column for vertical screens */
+    grid-template-columns: 1fr;
+  }
+  
+  /* Responsive grid for wider vertical screens (tablets in portrait) */
+  @media (min-width: 640px) {
+    .dashboard-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .dashboard-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+/* Utility layer for animation and special effects */
+@layer utilities {
+  .animate-widget-refresh {
+    @apply animate-fade-in;
+  }
+  
+  .animate-widget-update {
+    @apply animate-pulse-soft;
+  }
+  
+  .animate-widget-appear {
+    @apply animate-scale-in;
+  }
+  
+  /* Vertical screen optimizations */
+  .vertical-scroll {
+    @apply overflow-y-auto overflow-x-hidden;
+    /* Smooth scrolling on touch devices */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Hide scrollbars while maintaining functionality */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
