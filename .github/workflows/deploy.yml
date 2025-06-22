@@ -34,7 +34,8 @@ jobs:
     - name: Build React application
       run: npm run build
 
-    - name: Test Docker build
+    - name: Test Docker build (non-main branches)
+      if: github.ref != 'refs/heads/main'
       run: docker build -t health-dashboard:test .
 
     - name: Log in to GitHub Container Registry
