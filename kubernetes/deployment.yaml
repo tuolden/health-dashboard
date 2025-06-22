@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-dashboard
+  namespace: goal-app
+  labels:
+    app: health-dashboard
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: health-dashboard
+  template:
+    metadata:
+      labels:
+        app: health-dashboard
+        version: v1
+    spec:
+      containers:
+      - name: health-dashboard
+        image: black:32003/health-dashboard:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5301
+          name: http
+          protocol: TCP
+        env:
+        - name: APP_ENV
+          value: "production"
+        - name: FORCE_REDEPLOY
+          value: "v-2025-06-22-cpap-widgets"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5301
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5301
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      restartPolicy: Always
