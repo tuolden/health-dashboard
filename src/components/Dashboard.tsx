@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { WidgetDataState } from '../types/widget'
 import { getEnabledWidgets, defaultDashboardLayout } from '../widgets/widgets.config'
-import { TopNavBar, GridOverlay } from '../DesignSystem'
+import { GridOverlay } from '../DesignSystem'
+import StickyHeader from './StickyHeader'
 
 /**
  * Dashboard Component - Main container for all widgets
@@ -10,6 +11,8 @@ import { TopNavBar, GridOverlay } from '../DesignSystem'
 const Dashboard: React.FC = () => {
   const [widgetData, setWidgetData] = useState<Record<string, any>>({})
   const [widgetStates, setWidgetStates] = useState<Record<string, WidgetDataState>>({})
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
   
   const enabledWidgets = getEnabledWidgets()
   
@@ -39,15 +42,18 @@ const Dashboard: React.FC = () => {
 
     try {
       const data = await widget.mockDataGenerator()
+      const now = new Date()
       setWidgetData(prev => ({ ...prev, [widgetId]: data }))
       setWidgetStates(prev => ({
         ...prev,
         [widgetId]: {
           isLoading: false,
           isError: false,
-          lastUpdated: new Date()
+          lastUpdated: now
         }
       }))
+      // Update overall dashboard last updated time
+      setLastUpdated(now)
     } catch (error) {
       console.error(`Failed to load data for widget ${widgetId}:`, error)
       setWidgetStates(prev => ({
@@ -74,6 +80,13 @@ const Dashboard: React.FC = () => {
     loadWidgetData(widgetId)
   }
 
+  // Handle search functionality
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+    // TODO: Implement search filtering logic for widgets
+    console.log('Search query:', query)
+  }
+
   // Get grid column classes based on screen size
   const getGridClasses = (): string => {
     return `
@@ -88,13 +101,16 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-app-background">
-      {/* Fixed Top Navigation */}
-      <TopNavBar
-        title="Health Dashboard"
-      />
+      {/* Simple Header for Testing */}
+      <header className="sticky top-0 z-50 h-16 px-6 bg-white shadow-sm flex items-center justify-between">
+        <h1 className="text-xl font-semibold" style={{ color: '#101316' }}>Health Dashboard</h1>
+        <span className="text-sm text-gray-500">
+          {lastUpdated ? `Updated ${Math.floor((new Date().getTime() - lastUpdated.getTime()) / 60000)} min ago` : 'Loading...'}
+        </span>
+      </header>
 
       {/* Main Dashboard Content */}
-      <main className="main-content vertical-scroll">
+      <main className="pt-16 px-4 py-8">
         <div className="max-w-6xl mx-auto">
           {/* Dashboard Grid */}
           <div className={getGridClasses()}>

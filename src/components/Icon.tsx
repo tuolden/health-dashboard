@@ -1,6 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { 
+import {
   faWater,
   faPersonWalking,
   faHeart,
@@ -26,6 +26,7 @@ import {
   faEye,
   faEyeSlash,
   faGrid,
+  faSearch,
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -64,6 +65,7 @@ export const iconMap = {
   eye: faEye,
   eyeSlash: faEyeSlash,
   grid: faGrid,
+  search: faSearch,
 } as const
 
 export type IconName = keyof typeof iconMap
