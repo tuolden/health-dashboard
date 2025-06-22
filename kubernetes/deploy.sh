@@ -19,36 +19,40 @@ else
     exit 1
 fi
 
-# 1. Deploy nginx ingress controller first
-echo "📡 Deploying nginx ingress controller..."
-kubectl apply -f nginx-ingress-controller.yaml
-kubectl apply -f nginx-ingress-deployment.yaml
+# 1. Deploy nginx ingress controller first (if not already installed)
+echo "📡 Checking nginx ingress controller..."
+if ! kubectl get namespace ingress-nginx >/dev/null 2>&1; then
+    echo "🔧 Installing nginx ingress controller..."
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/cloud/deploy.yaml
 
-# 2. Wait for nginx ingress controller to be ready
-echo "⏳ Waiting for nginx ingress controller to be ready..."
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  --selector=app.kubernetes.io/component=controller \
-  --timeout=300s
+    # Wait for nginx ingress controller to be ready
+    echo "⏳ Waiting for nginx ingress controller to be ready..."
+    kubectl wait --namespace ingress-nginx \
+      --for=condition=ready pod \
+      --selector=app.kubernetes.io/component=controller \
+      --timeout=300s
+else
+    echo "✅ Nginx ingress controller already installed"
+fi
 
-# 3. Create goal-app namespace
+# 2. Create goal-app namespace
 echo "📁 Creating goal-app namespace..."
 kubectl create namespace goal-app --dry-run=client -o yaml | kubectl apply -f -
 
-# 4. Deploy Health Dashboard
+# 3. Deploy Health Dashboard
 echo "🏥 Deploying Health Dashboard application..."
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
 
-# 5. Wait for Health Dashboard to be ready
+# 4. Wait for Health Dashboard to be ready
 echo "⏳ Waiting for Health Dashboard to be ready..."
 kubectl wait --namespace goal-app \
   --for=condition=ready pod \
   --selector=app=health-dashboard \
   --timeout=300s
 
-# 6. Show deployment status
+# 5. Show deployment status
 echo "✅ Deployment complete! Checking status..."
 echo ""
 echo "📊 Nginx Ingress Controller:"
