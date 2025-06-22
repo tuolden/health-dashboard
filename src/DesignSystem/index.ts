@@ -34,7 +34,17 @@ export const colors = {
   widgetGrey: '#E0E1E5',
   widgetLightPurple: '#F2E3FE',
   widgetDarkBlue: '#E3ECF9',
-  
+
+  // Dark Mode Colors - Issue #4
+  darkBackground: '#101316',
+  darkCard: '#1A1C20',
+  darkTextPrimary: '#F4F6FA',
+  darkTextMuted: '#9CA3AF',
+  darkAccentBlue: '#4D9DE0',
+  darkAccentYellow: '#FFD94D',
+  darkSuccess: '#34D399',
+  darkDanger: '#F87171',
+
   // Legacy colors (for backward compatibility)
   primary: '#79BBFF',
   warning: '#FFD94D',

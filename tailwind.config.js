@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class', // Enable dark mode with class strategy
   theme: {
     extend: {
       // Design System Color Palette - Issue #2
@@ -21,6 +22,16 @@ export default {
         'widget-grey': '#E0E1E5',
         'widget-light-purple': '#F2E3FE',
         'widget-dark-blue': '#E3ECF9',
+
+        // Dark Mode Colors - Issue #4
+        'dark-background': '#101316',
+        'dark-card': '#1A1C20',
+        'dark-text-primary': '#F4F6FA',
+        'dark-text-muted': '#9CA3AF',
+        'dark-accent-blue': '#4D9DE0',
+        'dark-accent-yellow': '#FFD94D',
+        'dark-success': '#34D399',
+        'dark-danger': '#F87171',
 
         // Legacy colors for backward compatibility (will be phased out)
         background: '#F4F6FA', // Updated to match app-background
