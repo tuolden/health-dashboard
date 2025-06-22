@@ -55,9 +55,16 @@ export const WebSocketStatus: React.FC<WebSocketStatusProps> = ({
   }
 
   return (
-    <div className={`bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div className={`bg-white dark:bg-dark-card rounded-lg shadow-sm border-2 border-blue-500 ${className}`}>
+      {/* Debug Banner */}
+      <div className="bg-blue-100 dark:bg-blue-900 p-2 text-center">
+        <span className="text-xs font-bold text-blue-800 dark:text-blue-200">
+          🔧 WebSocket Status Component - Issue #8 (Debug Mode)
+        </span>
+      </div>
+
       {/* Header */}
-      <div 
+      <div
         className="p-4 cursor-pointer flex items-center justify-between"
         onClick={() => setIsExpanded(!isExpanded)}
       >

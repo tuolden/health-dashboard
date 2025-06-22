@@ -21,7 +21,7 @@ interface UseWebSocketOptions {
 const DEFAULT_OPTIONS: Required<UseWebSocketOptions> = {
   url: import.meta.env.VITE_WS_URL || (
     import.meta.env.PROD
-      ? 'ws://api.dashboard.home/ws'
+      ? 'wss://dashboard.home/ws'
       : 'ws://localhost:4000/ws'
   ),
   reconnectInterval: 3000, // 3 seconds

@@ -9,6 +9,12 @@ metadata:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     traefik.ingress.kubernetes.io/redirect-entry-point: "https"
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
+    # WebSocket support annotations
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "health-dashboard-api-service"
+    # Traefik WebSocket support
+    traefik.ingress.kubernetes.io/websocket: "true"
 spec:
   ingressClassName: traefik
   tls:
@@ -19,6 +25,13 @@ spec:
   - host: dashboard.home
     http:
       paths:
+      - path: /ws
+        pathType: Prefix
+        backend:
+          service:
+            name: health-dashboard-api-service
+            port:
+              number: 4000
       - path: /api
         pathType: Prefix
         backend:
