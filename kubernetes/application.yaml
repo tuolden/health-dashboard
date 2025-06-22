@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: health-dashboard
+  namespace: argocd
+spec:
+  project: goal-app
+  destination:
+    namespace: goal-app
+    server: 'https://kubernetes.default.svc'
+  source:
+    repoURL: 'https://github.com/tuolden/health-dashboard.git'
+    targetRevision: main
+    path: kubernetes
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

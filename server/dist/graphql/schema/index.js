@@ -1,12 +1,13 @@
+"use strict";
 /**
  * GraphQL Schema Definition - Issue #5
- * 
+ *
  * Complete GraphQL schema for Health Dashboard widgets with subscriptions
  */
-
-import { gql } from 'apollo-server-express'
-
-export const typeDefs = gql`
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.typeDefs = void 0;
+const apollo_server_express_1 = require("apollo-server-express");
+exports.typeDefs = (0, apollo_server_express_1.gql) `
   # Scalar types
   scalar DateTime
 
@@ -224,4 +225,5 @@ export const typeDefs = gql`
     # Placeholder for future mutations
     refreshWidget(widgetType: String!): Boolean!
   }
-`
+`;
+//# sourceMappingURL=index.js.map
