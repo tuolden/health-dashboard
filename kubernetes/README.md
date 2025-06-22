@@ -53,12 +53,35 @@ Ingress configuration for:
 
 ### Prerequisites
 - K3s cluster running
-- ArgoCD installed and configured
-- Nginx ingress controller
-- cert-manager for TLS certificates
 - Local Docker registry at `black:32003`
+- cert-manager for TLS certificates (optional)
 
-### Deploy with ArgoCD
+### 🚀 Automated Deployment (Recommended)
+The easiest way to deploy everything including nginx ingress controller:
+
+```bash
+# Clone the repository
+git clone https://github.com/tuolden/health-dashboard.git
+cd health-dashboard
+
+# Build and push Docker image
+docker build -t health-dashboard:latest .
+docker tag health-dashboard:latest black:32003/health-dashboard:latest
+docker push black:32003/health-dashboard:latest
+
+# Deploy everything with one command
+cd kubernetes
+./deploy.sh
+```
+
+This script will:
+1. Deploy nginx ingress controller
+2. Wait for it to be ready
+3. Create goal-app namespace
+4. Deploy Health Dashboard
+5. Show deployment status
+
+### Deploy with ArgoCD (GitOps)
 1. Apply the ArgoCD Application:
    ```bash
    kubectl apply -f kubernetes/application.yaml
@@ -69,12 +92,20 @@ Ingress configuration for:
    - Deploy all manifests in the `kubernetes/` directory
    - Keep the deployment in sync with the repository
 
-### Manual Deployment (Alternative)
+### Manual Deployment (Step by Step)
 ```bash
-# Create namespace if it doesn't exist
-kubectl create namespace goal-app
+# 1. Deploy nginx ingress controller
+kubectl apply -f kubernetes/nginx-ingress-controller.yaml
+kubectl apply -f kubernetes/nginx-ingress-deployment.yaml
 
-# Apply all manifests
+# 2. Wait for nginx ingress to be ready
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=300s
+
+# 3. Create namespace and deploy Health Dashboard
+kubectl create namespace goal-app
 kubectl apply -f kubernetes/deployment.yaml
 kubectl apply -f kubernetes/service.yaml
 kubectl apply -f kubernetes/ingress.yaml
