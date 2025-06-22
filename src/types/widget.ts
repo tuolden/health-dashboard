@@ -47,13 +47,14 @@ export interface WidgetConfig {
 }
 
 // Widget categories for organization
-export type WidgetCategory = 
+export type WidgetCategory =
   | 'activity'      // Steps, workouts, movement
   | 'nutrition'     // Calories, water, macros
   | 'vitals'        // Heart rate, blood pressure, weight
   | 'recovery'      // Sleep, stress, muscle recovery
   | 'tracking'      // Pain zones, medication, supplements
   | 'analytics'     // Charts, trends, summaries
+  | 'cpap'          // CPAP monitoring widgets
 
 // Props that every widget component receives
 export interface WidgetProps {

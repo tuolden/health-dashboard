@@ -50,9 +50,9 @@ export const CpapLeakRateWidget: React.FC<CpapLeakRateWidgetProps> = ({ classNam
       setLoading(true)
       setError(null)
 
-      // Calculate date range (last 30 days)
+      // Show all data from beginning of time
       const endDate = new Date().toISOString().split('T')[0]
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      const startDate = '2020-01-01' // Start from beginning of time to capture all data
 
       const response = await fetch(`http://localhost:4000/api/cpap/leak-rate?startDate=${startDate}&endDate=${endDate}`)
       
@@ -190,7 +190,7 @@ export const CpapLeakRateWidget: React.FC<CpapLeakRateWidgetProps> = ({ classNam
           <p className="text-metric font-bold text-gray-900 dark:text-gray-100">
             {averageLeakRate ? `${averageLeakRate.toFixed(1)}` : '--'}
           </p>
-          <p className="text-label text-gray-600 dark:text-gray-400">30-day Avg</p>
+          <p className="text-label text-gray-600 dark:text-gray-400">All-time Avg</p>
         </div>
         
         <div className="text-center">

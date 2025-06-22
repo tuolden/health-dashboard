@@ -39,10 +39,14 @@ const QUALITY_COLORS = {
 }
 
 export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ className = '' }) => {
+  console.log('🫁 [SpO2 Widget] Component rendering...')
+
   const [data, setData] = useState<Spo2TrendData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
+
+  console.log('🫁 [SpO2 Widget] Current state:', { loading, error, dataLength: data.length })
 
   // Fetch SpO2 trend data
   const fetchSpo2Data = async () => {
@@ -50,19 +54,38 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
       setLoading(true)
       setError(null)
 
-      // Calculate date range (last 30 days)
+      // Show all data from beginning of time
       const endDate = new Date().toISOString().split('T')[0]
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      const startDate = '2020-01-01' // Start from beginning of time to capture all data
 
-      const response = await fetch(`http://localhost:4000/api/cpap/spo2-trend?startDate=${startDate}&endDate=${endDate}`)
-      
+      console.log('🫁 [SpO2 Widget] Using full date range to show all historical data')
+
+      const url = `http://localhost:4000/api/cpap/spo2-trend?startDate=${startDate}&endDate=${endDate}`
+      console.log('🫁 [SpO2 Widget] Fetching data from:', url)
+      console.log('🫁 [SpO2 Widget] Date range:', { startDate, endDate })
+      console.log('🫁 [SpO2 Widget] About to make fetch request...')
+
+      // Test if fetch is available
+      if (typeof fetch === 'undefined') {
+        throw new Error('Fetch API is not available')
+      }
+
+      const response = await fetch(url)
+      console.log('🫁 [SpO2 Widget] Fetch completed successfully!')
+      console.log('🫁 [SpO2 Widget] Response status:', response.status, response.statusText)
+      console.log('🫁 [SpO2 Widget] Response headers:', Object.fromEntries(response.headers.entries()))
+
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+        const errorText = await response.text()
+        console.error('🫁 [SpO2 Widget] Response error body:', errorText)
+        throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`)
       }
 
       const result = await response.json()
-      
+      console.log('🫁 [SpO2 Widget] API Response:', result)
+
       if (!result.success) {
+        console.error('🫁 [SpO2 Widget] API returned error:', result.error)
         throw new Error(result.error?.message || 'Failed to fetch SpO2 data')
       }
 
@@ -75,10 +98,17 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
         displayDate: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
       }))
 
+      console.log('🫁 [SpO2 Widget] Transformed chart data:', chartData)
       setData(chartData)
       setLastUpdated(new Date())
+      console.log('🫁 [SpO2 Widget] Data fetch successful!')
     } catch (err) {
-      console.error('❌ Error fetching SpO2 data:', err)
+      console.error('❌ [SpO2 Widget] Error fetching SpO2 data:', err)
+      console.error('❌ [SpO2 Widget] Error details:', {
+        name: err instanceof Error ? err.name : 'Unknown',
+        message: err instanceof Error ? err.message : 'Unknown error',
+        stack: err instanceof Error ? err.stack : 'No stack trace'
+      })
       setError(err instanceof Error ? err.message : 'Unknown error occurred')
     } finally {
       setLoading(false)
@@ -87,6 +117,7 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
 
   // Initial data fetch
   useEffect(() => {
+    console.log('🫁 [SpO2 Widget] Component mounted, starting data fetch...')
     fetchSpo2Data()
   }, [])
 
@@ -181,7 +212,7 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
           <p className="text-metric font-bold text-gray-900 dark:text-gray-100">
             {averageSpo2 ? `${averageSpo2.toFixed(1)}%` : '--'}
           </p>
-          <p className="text-label text-gray-600 dark:text-gray-400">30-day Avg</p>
+          <p className="text-label text-gray-600 dark:text-gray-400">All-time Avg</p>
         </div>
         
         <div className="text-center">

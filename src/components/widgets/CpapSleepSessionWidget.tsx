@@ -50,9 +50,9 @@ export const CpapSleepSessionWidget: React.FC<CpapSleepSessionWidgetProps> = ({ 
       setLoading(true)
       setError(null)
 
-      // Calculate date range (last 30 days)
+      // Show all data from beginning of time
       const endDate = new Date().toISOString().split('T')[0]
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      const startDate = '2020-01-01' // Start from beginning of time to capture all data
 
       const response = await fetch(`http://localhost:4000/api/cpap/sleep-sessions?startDate=${startDate}&endDate=${endDate}`)
       

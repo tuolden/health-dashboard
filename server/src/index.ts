@@ -42,11 +42,13 @@ async function startServer() {
     crossOriginEmbedderPolicy: false
   }))
 
-  // CORS configuration
+  // CORS configuration - Allow both 3000 and 3001 for development
   app.use(cors({
-    origin: [FRONTEND_URL, 'http://localhost:3000'],
+    origin: [FRONTEND_URL, 'http://localhost:3000', 'http://localhost:3001'],
     credentials: true
   }))
+
+  console.log('🌐 CORS configured for origins:', [FRONTEND_URL, 'http://localhost:3000', 'http://localhost:3001'])
 
   // JSON body parsing middleware
   app.use(express.json({ limit: '10mb' }))

@@ -54,9 +54,9 @@ export const CpapSpo2PulseWidget: React.FC<CpapSpo2PulseWidgetProps> = ({ classN
       setLoading(true)
       setError(null)
 
-      // Calculate date range (last 30 days)
+      // Show all data from beginning of time
       const endDate = new Date().toISOString().split('T')[0]
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      const startDate = '2020-01-01' // Start from beginning of time to capture all data
 
       const response = await fetch(`http://localhost:4000/api/cpap/spo2-pulse?startDate=${startDate}&endDate=${endDate}`)
       
@@ -156,7 +156,7 @@ export const CpapSpo2PulseWidget: React.FC<CpapSpo2PulseWidgetProps> = ({ classN
               SpO2 & Pulse Rate
             </h3>
             <p className="text-label text-gray-600 dark:text-gray-400">
-              Dual health correlation
+              All historical data
             </p>
           </div>
         </div>

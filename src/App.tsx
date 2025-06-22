@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { ApolloProvider } from '@apollo/client'
 import useTimeBasedTheme from './hooks/useTimeBasedTheme'
 import { apolloClient } from './graphql/client'
+import { CpapSpo2TrendWidget } from './components/widgets/CpapSpo2TrendWidget'
+import { CpapSpo2PulseWidget } from './components/widgets/CpapSpo2PulseWidget'
+import { CpapLeakRateWidget } from './components/widgets/CpapLeakRateWidget'
+import { CpapSleepSessionWidget } from './components/widgets/CpapSleepSessionWidget'
 import './utils/darkModeTest' // Load test utilities
 import './App.css'
 
@@ -138,101 +142,70 @@ function App() {
             Welcome to your health dashboard with automatic dark mode that activates at 6 PM.
           </p>
 
-          {/* Sample Widgets Grid - Multiple Rows for Scroll Testing */}
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Row 1 */}
-            <div className="bg-widget-default dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Steps</h3>
-              <p className="text-metric text-blue-600 dark:text-dark-accent-blue transition-colors duration-300">8,547</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">steps today</p>
+          {/* Health & Activity Widgets */}
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 mb-8">
+            {/* Steps Widget */}
+            <div className="bg-widget-1 dark:bg-widget-1-dark p-6 rounded-xl shadow-sm">
+              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-gray-100">Steps Today</h3>
+              <p className="text-metric text-blue-600 dark:text-blue-400">8,547</p>
+              <p className="text-label text-gray-500 dark:text-gray-400">steps today</p>
             </div>
 
-            <div className="bg-widget-green dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Water Intake</h3>
-              <p className="text-metric text-gray-900 dark:text-dark-success transition-colors duration-300">6.2L</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">of 8L goal</p>
+            {/* Water Intake Widget */}
+            <div className="bg-widget-2 dark:bg-widget-2-dark p-6 rounded-xl shadow-sm">
+              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-gray-100">Water Intake</h3>
+              <p className="text-metric text-blue-600 dark:text-blue-400">6.2L</p>
+              <p className="text-label text-gray-500 dark:text-gray-400">of 8L goal</p>
+            </div>
+          </div>
+
+          {/* CPAP Monitoring Widgets - Issue #7 */}
+          <div className="mb-8">
+            <h2 className="text-subtitle mb-6 text-gray-900 dark:text-gray-100">CPAP Monitoring</h2>
+
+            {/* Debug Info */}
+            <div className="mb-4 p-4 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                🔍 Debug: Frontend running on port 3001, Backend on port 4000
+              </p>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                📡 CPAP widgets should fetch from: http://localhost:4000/api/cpap/*
+              </p>
+              <button
+                onClick={async () => {
+                  console.log('🧪 Testing backend connection...')
+                  try {
+                    const response = await fetch('http://localhost:4000/api/cpap/health')
+                    const data = await response.json()
+                    console.log('🧪 Backend test successful:', data)
+                    alert('Backend connection successful! Check console for details.')
+                  } catch (err) {
+                    console.error('🧪 Backend test failed:', err)
+                    alert('Backend connection failed! Check console for details.')
+                  }
+                }}
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                🧪 Test Backend Connection
+              </button>
             </div>
 
-            <div className="bg-widget-purple dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Heart Rate</h3>
-              <p className="text-metric text-red-500 dark:text-dark-danger transition-colors duration-300">72 BPM</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">resting</p>
-            </div>
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+              {/* SpO2 Daily Trend Widget */}
+              <div className="lg:col-span-2">
+                <CpapSpo2TrendWidget />
+              </div>
 
-            {/* Row 2 */}
-            <div className="bg-widget-yellow dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Calories</h3>
-              <p className="text-metric text-orange-600 dark:text-dark-accent-yellow transition-colors duration-300">1,847</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">of 2,200 goal</p>
-            </div>
+              {/* SpO2 + Pulse Rate Dual-Axis Widget */}
+              <div className="lg:col-span-2">
+                <CpapSpo2PulseWidget />
+              </div>
 
-            <div className="bg-widget-grey dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Sleep</h3>
-              <p className="text-metric text-indigo-600 dark:text-dark-accent-blue transition-colors duration-300">7h 23m</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">last night</p>
-            </div>
+              {/* Leak Rate Monitoring Widget */}
+              <CpapLeakRateWidget />
 
-            <div className="bg-widget-light-purple dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Weight</h3>
-              <p className="text-metric text-purple-600 dark:text-dark-accent-blue transition-colors duration-300">68.2 kg</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">-0.3kg this week</p>
-            </div>
-
-            {/* Row 3 */}
-            <div className="bg-widget-dark-blue dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Blood Pressure</h3>
-              <p className="text-metric text-blue-700 dark:text-dark-accent-blue transition-colors duration-300">120/80</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">mmHg</p>
-            </div>
-
-            <div className="bg-widget-pink dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Workouts</h3>
-              <p className="text-metric text-pink-600 dark:text-dark-danger transition-colors duration-300">3</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">this week</p>
-            </div>
-
-            <div className="bg-widget-default dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Meditation</h3>
-              <p className="text-metric text-green-600 dark:text-dark-success transition-colors duration-300">15 min</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">today</p>
-            </div>
-
-            {/* Row 4 */}
-            <div className="bg-widget-green dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Nutrition Score</h3>
-              <p className="text-metric text-green-700 dark:text-dark-success transition-colors duration-300">85%</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">excellent</p>
-            </div>
-
-            <div className="bg-widget-yellow dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Active Minutes</h3>
-              <p className="text-metric text-yellow-600 dark:text-dark-accent-yellow transition-colors duration-300">127</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">minutes today</p>
-            </div>
-
-            <div className="bg-widget-purple dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Stress Level</h3>
-              <p className="text-metric text-purple-500 dark:text-dark-accent-blue transition-colors duration-300">Low</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">based on HRV</p>
-            </div>
-
-            {/* Row 5 */}
-            <div className="bg-widget-dark-blue dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">VO2 Max</h3>
-              <p className="text-metric text-blue-600 dark:text-dark-accent-blue transition-colors duration-300">42.1</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">ml/kg/min</p>
-            </div>
-
-            <div className="bg-widget-pink dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Body Fat</h3>
-              <p className="text-metric text-pink-500 dark:text-dark-danger transition-colors duration-300">18.5%</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">healthy range</p>
-            </div>
-
-            <div className="bg-widget-light-purple dark:bg-dark-card p-6 rounded-widget shadow-widget transition-colors duration-300">
-              <h3 className="text-widget-title mb-3 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">Recovery</h3>
-              <p className="text-metric text-purple-400 dark:text-dark-accent-blue transition-colors duration-300">Good</p>
-              <p className="text-label text-gray-500 dark:text-dark-text-muted transition-colors duration-300">ready to train</p>
+              {/* Sleep Session Start Time Widget */}
+              <CpapSleepSessionWidget />
             </div>
           </div>
 
