@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { ApolloProvider } from '@apollo/client'
 import useTimeBasedTheme from './hooks/useTimeBasedTheme'
+import { apolloClient } from './graphql/client'
 import './utils/darkModeTest' // Load test utilities
 import './App.css'
 
@@ -50,7 +52,8 @@ function App() {
     setIsSearchExpanded(false)
   }
   return (
-    <div className="min-h-screen bg-app-background dark:bg-dark-background transition-colors duration-300">
+    <ApolloProvider client={apolloClient}>
+      <div className="min-h-screen bg-app-background dark:bg-dark-background transition-colors duration-300">
       {/* Sticky Header - Issue #3 & #4 Implementation */}
       <header
         className="fixed top-0 left-0 right-0 z-50 h-12 px-6 bg-white dark:bg-dark-card shadow-sm flex items-center justify-between transition-colors duration-300"
@@ -276,7 +279,8 @@ function App() {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </ApolloProvider>
   )
 }
 
