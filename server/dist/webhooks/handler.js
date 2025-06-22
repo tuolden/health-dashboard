@@ -16,7 +16,6 @@ const widgetRegistry_1 = require("../graphql/widgetRegistry");
 const pubsub_1 = require("../utils/pubsub");
 // Rate limiter configuration
 const rateLimiter = new rate_limiter_flexible_1.RateLimiterMemory({
-    keyGenerator: (req) => req.ip,
     points: 100, // Number of requests
     duration: 60, // Per 60 seconds
 });
@@ -31,7 +30,7 @@ const webhookPayloadSchema = joi_1.default.object({
     version: joi_1.default.string().optional()
 });
 // Webhook authentication (simple token-based for now)
-const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || 'health-dashboard-webhook-secret';
+const WEBHOOK_SECRET = process.env['WEBHOOK_SECRET'] || 'health-dashboard-webhook-secret';
 /**
  * Authenticate webhook request
  */
@@ -51,7 +50,7 @@ const authenticateWebhook = (req) => {
 /**
  * Process webhook payload and trigger updates
  */
-const processWebhookPayload = async (payload, pubsub) => {
+const processWebhookPayload = async (payload, _pubsub) => {
     const { source, dataset, data, timestamp, metadata, batchJobId } = payload;
     console.log(`📡 Processing webhook from ${source} for dataset: ${dataset}`);
     // Validate dataset exists in registry
@@ -67,17 +66,17 @@ const processWebhookPayload = async (payload, pubsub) => {
     await (0, pubsub_1.publishDatasetRefresh)(dataset, affectedWidgets);
     // Publish individual widget updates
     for (const widgetType of affectedWidgets) {
-        await (0, pubsub_1.publishWidgetUpdate)(widgetType, {
+        await (0, pubsub_1.publishWidgetUpdate)(widgetType, JSON.stringify({
             source,
             dataset,
             data,
             timestamp: timestamp || new Date().toISOString(),
             metadata,
             batchJobId
-        });
+        }));
     }
     // Publish webhook received event
-    await (0, pubsub_1.publishWebhookReceived)(source, payload);
+    await (0, pubsub_1.publishWebhookReceived)(source, JSON.stringify(payload));
     console.log(`✅ Webhook processed successfully: ${affectedWidgets.length} widgets updated`);
 };
 /**
@@ -87,7 +86,7 @@ const handleWebhook = async (req, res, pubsub) => {
     try {
         // Rate limiting
         try {
-            await rateLimiter.consume(req.ip);
+            await rateLimiter.consume(req.ip || 'unknown');
         }
         catch (rateLimiterRes) {
             console.warn(`⚠️ Rate limit exceeded for IP: ${req.ip}`);
@@ -135,7 +134,7 @@ const handleWebhook = async (req, res, pubsub) => {
         res.status(500).json({
             error: 'Internal Server Error',
             message: 'Failed to process webhook',
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            details: process.env['NODE_ENV'] === 'development' ? error.message : undefined
         });
     }
 };
@@ -189,7 +188,7 @@ const setupWebhooks = (app, pubsub) => {
         await handleWebhook(req, res, pubsub);
     });
     // Webhook status endpoint
-    app.get('/api/webhook/status', (req, res) => {
+    app.get('/api/webhook/status', (_req, res) => {
         const stats = widgetRegistry_1.widgetRegistry.getStats();
         res.json({
             status: 'active',

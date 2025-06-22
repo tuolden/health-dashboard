@@ -9,6 +9,12 @@ import WaterIntakeWidget from './WaterIntakeWidget'
 // import HeartRateWidget from './HeartRateWidget'
 // import WeightHistoryWidget from './WeightHistoryWidget'
 
+// Import CPAP widgets - Issue #7
+import { CpapSpo2TrendWidget } from '../components/widgets/CpapSpo2TrendWidget'
+import { CpapSpo2PulseWidget } from '../components/widgets/CpapSpo2PulseWidget'
+import { CpapLeakRateWidget } from '../components/widgets/CpapLeakRateWidget'
+import { CpapSleepSessionWidget } from '../components/widgets/CpapSleepSessionWidget'
+
 // Temporary placeholder components for widgets not yet created
 const CaloriesWidget: React.FC<any> = () => React.createElement('div', null, 'Calories Widget Coming Soon')
 const HeartRateWidget: React.FC<any> = () => React.createElement('div', null, 'Heart Rate Widget Coming Soon')
@@ -117,6 +123,79 @@ export const widgetRegistry: WidgetRegistryEntry[] = [
       accentColor: '#E0BBE4',
       animation: 'fade-in'
     }
+  },
+  // CPAP Widgets - Issue #7
+  {
+    id: 'cpap-spo2-trend',
+    title: 'SpO2 Daily Trend',
+    description: 'Blood oxygen saturation monitoring for therapy effectiveness',
+    component: CpapSpo2TrendWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'cpap',
+    priority: 15,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#3b82f6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'cpap-spo2-pulse',
+    title: 'SpO2 & Pulse Rate',
+    description: 'Dual-axis correlation analysis of oxygen and heart rate',
+    component: CpapSpo2PulseWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'cpap',
+    priority: 14,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'cpap-leak-rate',
+    title: 'Leak Rate Monitoring',
+    description: 'Mask fit tracking with 24 L/min threshold monitoring',
+    component: CpapLeakRateWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'cpap',
+    priority: 13,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#f59e0b',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'cpap-sleep-sessions',
+    title: 'Sleep Start Times',
+    description: 'CPAP session bedtime patterns and sleep schedule tracking',
+    component: CpapSleepSessionWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 3600000, // 1 hour
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'cpap',
+    priority: 12,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#6366f1',
+      animation: 'fade-in'
+    }
   }
 ]
 
@@ -149,14 +228,21 @@ export const getEnabledWidgets = (): WidgetRegistryEntry[] => {
 export const defaultDashboardLayout = {
   id: 'default-vertical',
   name: 'Default Vertical Layout',
-  description: 'Optimized layout for portrait/vertical screens',
+  description: 'Optimized layout for portrait/vertical screens with CPAP monitoring',
   columns: 2, // Start with 2 columns for most vertical screens
   isDefault: true,
   widgets: [
+    // Health & Activity Widgets
     { id: 'steps-today', column: 1, row: 1, width: 1, height: 1 },
     { id: 'water-intake', column: 2, row: 1, width: 1, height: 1 },
     { id: 'calories-macros', column: 1, row: 2, width: 2, height: 1 },
     { id: 'heart-rate', column: 1, row: 3, width: 1, height: 1 },
     { id: 'weight-history', column: 1, row: 4, width: 2, height: 2 },
+
+    // CPAP Monitoring Widgets - Issue #7
+    { id: 'cpap-spo2-trend', column: 1, row: 6, width: 2, height: 2 },
+    { id: 'cpap-spo2-pulse', column: 1, row: 8, width: 2, height: 2 },
+    { id: 'cpap-leak-rate', column: 1, row: 10, width: 2, height: 1 },
+    { id: 'cpap-sleep-sessions', column: 1, row: 11, width: 2, height: 1 },
   ]
 }

@@ -1,10 +1,15 @@
 /**
- * Widget Registry System - Issue #5
+ * Widget Registry System - Issue #5 + #7
  *
  * Central registry that maps datasets to widgets and manages dependencies
- * for webhook routing and real-time updates
+ * for webhook routing and real-time updates. Extended with CPAP widgets.
  */
-import { WidgetRegistryEntry } from '../types/widgets';
+export interface WidgetRegistryEntry {
+    widgetType: string;
+    datasetName: string;
+    isActive: boolean;
+    lastUpdated?: Date;
+}
 export declare const WIDGET_REGISTRY: WidgetRegistryEntry[];
 export declare class WidgetRegistry {
     private registry;

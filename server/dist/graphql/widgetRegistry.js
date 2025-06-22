@@ -1,9 +1,9 @@
 "use strict";
 /**
- * Widget Registry System - Issue #5
+ * Widget Registry System - Issue #5 + #7
  *
  * Central registry that maps datasets to widgets and manages dependencies
- * for webhook routing and real-time updates
+ * for webhook routing and real-time updates. Extended with CPAP widgets.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isValidWidget = exports.isValidDataset = exports.getAffectedWidgets = exports.widgetRegistry = exports.WidgetRegistry = exports.WIDGET_REGISTRY = void 0;
@@ -49,6 +49,27 @@ exports.WIDGET_REGISTRY = [
     {
         widgetType: 'activity',
         datasetName: 'activity_data',
+        isActive: true
+    },
+    // CPAP Widgets - Issue #7
+    {
+        widgetType: 'cpap-spo2-trend',
+        datasetName: 'cpap_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'cpap-spo2-pulse',
+        datasetName: 'cpap_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'cpap-leak-rate',
+        datasetName: 'cpap_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'cpap-sleep-sessions',
+        datasetName: 'cpap_metrics',
         isActive: true
     },
     // Additional widgets that might share datasets

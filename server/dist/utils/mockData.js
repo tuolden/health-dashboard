@@ -20,7 +20,7 @@ const getRandomFloat = (min, max, decimals = 1) => {
     return parseFloat((Math.random() * (max - min) + min).toFixed(decimals));
 };
 // Steps Mock Data
-const generateStepsData = (timeRange) => {
+const generateStepsData = (_timeRange) => {
     const today = new Date();
     const currentSteps = getRandomInt(6000, 12000);
     const goal = 10000;
@@ -75,7 +75,7 @@ const generateWaterIntakeData = (date) => {
 };
 exports.generateWaterIntakeData = generateWaterIntakeData;
 // Weight Mock Data
-const generateWeightData = (timeRange) => {
+const generateWeightData = (_timeRange) => {
     const baseWeight = getRandomFloat(60, 90, 1);
     const today = new Date();
     const history = Array.from({ length: 30 }, (_, i) => ({
@@ -87,8 +87,8 @@ const generateWeightData = (timeRange) => {
         muscleMass: getRandomFloat(30, 45, 1)
     }));
     const currentWeight = baseWeight + getRandomFloat(-1, 1, 1);
-    const weeklyChange = currentWeight - history[7].weight;
-    const monthlyChange = currentWeight - history[29].weight;
+    const weeklyChange = currentWeight - (history[7]?.weight || currentWeight);
+    const monthlyChange = currentWeight - (history[29]?.weight || currentWeight);
     let trend = 'stable';
     if (weeklyChange > 0.5)
         trend = 'increasing';
@@ -111,7 +111,7 @@ const generateWeightData = (timeRange) => {
 };
 exports.generateWeightData = generateWeightData;
 // Heart Rate Mock Data
-const generateHeartRateData = (timeRange) => {
+const generateHeartRateData = (_timeRange) => {
     const restingHR = getRandomInt(60, 80);
     const maxHR = 220 - 30; // Assuming age 30
     const zones = {
@@ -147,7 +147,7 @@ const generateNutritionData = (date) => {
     const entries = [
         {
             id: (0, uuid_1.v4)(),
-            timestamp: new Date(targetDate.setHours(8, 0)),
+            timestamp: new Date(new Date(targetDate).setHours(8, 0)),
             calories: 450,
             protein: 20,
             carbs: 45,
@@ -157,23 +157,13 @@ const generateNutritionData = (date) => {
         },
         {
             id: (0, uuid_1.v4)(),
-            timestamp: new Date(targetDate.setHours(13, 0)),
+            timestamp: new Date(new Date(targetDate).setHours(13, 0)),
             calories: 650,
             protein: 35,
             carbs: 55,
             fat: 25,
             fiber: 12,
             sugar: 8
-        },
-        {
-            id: (0, uuid_1.v4)(),
-            timestamp: new Date(targetDate.setHours(19, 0)),
-            calories: 580,
-            protein: 40,
-            carbs: 40,
-            fat: 22,
-            fiber: 10,
-            sugar: 6
         }
     ];
     const totals = entries.reduce((acc, entry) => ({
@@ -201,12 +191,9 @@ const generateNutritionData = (date) => {
         carbs: 250,
         fat: 80
     };
-    // Calculate nutrition score (simplified)
     const score = Math.min(100, Math.round((totals.protein / goals.protein * 25) +
         (Math.min(totals.calories, goals.calories) / goals.calories * 25) +
-        ((totals.fiber || 0) / 30 * 25) + // 30g fiber target
-        (25) // Base score for having balanced meals
-    ));
+        ((totals.fiber || 0) / 30 * 25) + 25));
     return {
         date: targetDate,
         entries,
@@ -217,7 +204,7 @@ const generateNutritionData = (date) => {
 };
 exports.generateNutritionData = generateNutritionData;
 // Sleep Mock Data
-const generateSleepData = (timeRange) => {
+const generateSleepData = (_timeRange) => {
     const generateSleepEntry = (daysAgo) => {
         const date = getDateDaysAgo(daysAgo);
         const bedtime = new Date(date);
@@ -264,14 +251,6 @@ const generateActivityData = (date) => {
             intensity: 'moderate',
             caloriesBurned: 400,
             startTime: new Date(new Date(targetDate).setHours(7, 0))
-        },
-        {
-            id: (0, uuid_1.v4)(),
-            type: 'Strength Training',
-            duration: 60,
-            intensity: 'high',
-            caloriesBurned: 300,
-            startTime: new Date(new Date(targetDate).setHours(18, 30))
         }
     ];
     const activeMinutes = workouts.reduce((sum, workout) => sum + workout.duration, 0) + getRandomInt(30, 90);

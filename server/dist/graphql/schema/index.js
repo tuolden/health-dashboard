@@ -1,8 +1,9 @@
 "use strict";
 /**
- * GraphQL Schema Definition - Issue #5
+ * GraphQL Schema Definition - Issue #5 + #7
  *
  * Complete GraphQL schema for Health Dashboard widgets with subscriptions
+ * Extended with CPAP metrics support for Issue #7
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeDefs = void 0;
@@ -21,6 +22,43 @@ exports.typeDefs = (0, apollo_server_express_1.gql) `
   input TimeRangeInput {
     start: DateTime!
     end: DateTime!
+  }
+
+  # CPAP Types - Issue #7
+  type CPAPMetrics {
+    date: String!
+    spo2_avg: Float
+    pulse_rate_avg: Float
+    leak_rate_avg: Float
+    session_start: String!
+  }
+
+  type CPAPSpo2Trend {
+    date: String!
+    spo2_avg: Float
+    isHealthy: Boolean!
+    qualityRating: String! # "excellent", "good", "concerning", "critical"
+  }
+
+  type CPAPSpo2Pulse {
+    date: String!
+    spo2_avg: Float
+    pulse_rate_avg: Float
+    correlation: String! # "normal", "concerning", "critical"
+  }
+
+  type CPAPLeakRate {
+    date: String!
+    leak_rate_avg: Float
+    isWithinThreshold: Boolean!
+    severity: String! # "excellent", "good", "concerning", "critical"
+  }
+
+  type CPAPSleepSession {
+    date: String!
+    session_start: String!
+    bedtime_hour: Int!
+    sleep_pattern: String! # "early", "normal", "late", "irregular"
   }
 
   # Steps Widget Types
@@ -200,6 +238,13 @@ exports.typeDefs = (0, apollo_server_express_1.gql) `
     sleep(timeRange: TimeRangeInput): SleepHistory!
     activity(date: DateTime): ActivityData!
     
+    # CPAP Data Queries - Issue #7
+    getCPAPMetricsRange(start: String!, end: String!): [CPAPMetrics!]!
+    getCPAPSpo2Trend(start: String!, end: String!): [CPAPSpo2Trend!]!
+    getCPAPSpo2Pulse(start: String!, end: String!): [CPAPSpo2Pulse!]!
+    getCPAPLeakRate(start: String!, end: String!): [CPAPLeakRate!]!
+    getCPAPSleepSessions(start: String!, end: String!): [CPAPSleepSession!]!
+    
     # System Queries
     health: String!
     widgetRegistry: [WidgetRegistryEntry!]!
@@ -218,12 +263,18 @@ exports.typeDefs = (0, apollo_server_express_1.gql) `
     widgetUpdated(widgetType: String): WidgetUpdate!
     datasetRefreshed(datasetName: String): DatasetRefresh!
     webhookReceived(source: String): WebhookEvent!
+    
+    # CPAP Data Subscriptions - Issue #7
+    cpapDataUpdated(metricType: String): WidgetUpdate!
   }
 
   # Mutation Type (for future extensibility)
   type Mutation {
     # Placeholder for future mutations
     refreshWidget(widgetType: String!): Boolean!
+    
+    # CPAP Data Mutations - Issue #7
+    refreshCPAPData: Boolean!
   }
 `;
 //# sourceMappingURL=index.js.map
