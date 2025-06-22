@@ -28,8 +28,12 @@ spec:
         env:
         - name: APP_ENV
           value: "production"
+        - name: VITE_GRAPHQL_URL
+          value: "https://api.dashboard.home/graphql"
+        - name: VITE_GRAPHQL_WS_URL
+          value: "wss://api.dashboard.home/graphql"
         - name: FORCE_REDEPLOY
-          value: "v-2025-06-22-cpap-widgets"
+          value: "v-2025-06-22-cpap-api-backend"
         resources:
           requests:
             memory: "128Mi"

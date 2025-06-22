@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } from 'recharts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWind, faRefresh, faExclamationTriangle, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
+import { getCpapApiUrl } from '../../utils/apiConfig'
 
 // Types for CPAP Leak Rate data
 interface LeakRateData {
@@ -54,7 +55,7 @@ export const CpapLeakRateWidget: React.FC<CpapLeakRateWidgetProps> = ({ classNam
       const endDate = new Date().toISOString().split('T')[0]
       const startDate = '2020-01-01' // Start from beginning of time to capture all data
 
-      const response = await fetch(`http://localhost:4000/api/cpap/leak-rate?startDate=${startDate}&endDate=${endDate}`)
+      const response = await fetch(`${getCpapApiUrl('leak-rate')}?startDate=${startDate}&endDate=${endDate}`)
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)

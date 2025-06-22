@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: health-dashboard-api
+  namespace: goal-app
+  labels:
+    app: health-dashboard-api
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: traefik
+  tls:
+  - hosts:
+    - api.dashboard.home
+    secretName: health-dashboard-api-tls
+  rules:
+  - host: api.dashboard.home
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: health-dashboard-api-service
+            port:
+              number: 4000

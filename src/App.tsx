@@ -6,6 +6,7 @@ import { CpapSpo2TrendWidget } from './components/widgets/CpapSpo2TrendWidget'
 import { CpapSpo2PulseWidget } from './components/widgets/CpapSpo2PulseWidget'
 import { CpapLeakRateWidget } from './components/widgets/CpapLeakRateWidget'
 import { CpapSleepSessionWidget } from './components/widgets/CpapSleepSessionWidget'
+import { getCpapApiUrl, apiConfig } from './utils/apiConfig'
 import './utils/darkModeTest' // Load test utilities
 import './App.css'
 
@@ -166,16 +167,16 @@ function App() {
             {/* Debug Info */}
             <div className="mb-4 p-4 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                🔍 Debug: Frontend running on port 3001, Backend on port 4000
+                🔍 Debug: Environment: {apiConfig.isProduction ? 'Production' : 'Development'}
               </p>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                📡 CPAP widgets should fetch from: http://localhost:4000/api/cpap/*
+                📡 CPAP widgets fetch from: {apiConfig.baseUrl}/cpap/*
               </p>
               <button
                 onClick={async () => {
                   console.log('🧪 Testing backend connection...')
                   try {
-                    const response = await fetch('http://localhost:4000/api/cpap/health')
+                    const response = await fetch(getCpapApiUrl('health'))
                     const data = await response.json()
                     console.log('🧪 Backend test successful:', data)
                     alert('Backend connection successful! Check console for details.')

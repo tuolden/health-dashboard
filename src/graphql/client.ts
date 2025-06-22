@@ -10,9 +10,13 @@ import { getMainDefinition } from '@apollo/client/utilities'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { createClient } from 'graphql-ws'
 
-// GraphQL server URLs
-const GRAPHQL_HTTP_URL = import.meta.env.VITE_GRAPHQL_URL || 'http://localhost:4000/graphql'
-const GRAPHQL_WS_URL = import.meta.env.VITE_GRAPHQL_WS_URL || 'ws://localhost:4000/graphql'
+// GraphQL server URLs - Use relative URLs for production deployment
+const GRAPHQL_HTTP_URL = import.meta.env.VITE_GRAPHQL_URL || (
+  import.meta.env.PROD ? '/api/graphql' : 'http://localhost:4000/graphql'
+)
+const GRAPHQL_WS_URL = import.meta.env.VITE_GRAPHQL_WS_URL || (
+  import.meta.env.PROD ? 'wss://dashboard.home/api/graphql' : 'ws://localhost:4000/graphql'
+)
 
 // HTTP Link for queries and mutations
 const httpLink = createHttpLink({

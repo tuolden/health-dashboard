@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: health-dashboard-api
+  namespace: goal-app
+  labels:
+    app: health-dashboard-api
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: health-dashboard-api
+  template:
+    metadata:
+      labels:
+        app: health-dashboard-api
+        version: v1
+    spec:
+      containers:
+      - name: health-dashboard-api
+        image: black:32003/health-dashboard-api:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 4000
+          name: http
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "4000"
+        - name: CPAP_DB_HOST
+          value: "192.168.0.162"
+        - name: CPAP_DB_PORT
+          value: "30017"
+        - name: CPAP_DB_NAME
+          value: "health_ingest"
+        - name: CPAP_DB_USER
+          value: "user"
+        - name: CPAP_DB_PASSWORD
+          value: "8M&=3[Io944"
+        - name: FRONTEND_URL
+          value: "https://dashboard.home"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 4000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      restartPolicy: Always

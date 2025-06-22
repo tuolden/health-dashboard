@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBed, faRefresh, faExclamationTriangle, faMoon, faSun, faClock } from '@fortawesome/free-solid-svg-icons'
+import { getCpapApiUrl } from '../../utils/apiConfig'
 
 // Types for CPAP Sleep Session data
 interface SleepSessionData {
@@ -54,7 +55,7 @@ export const CpapSleepSessionWidget: React.FC<CpapSleepSessionWidgetProps> = ({ 
       const endDate = new Date().toISOString().split('T')[0]
       const startDate = '2020-01-01' // Start from beginning of time to capture all data
 
-      const response = await fetch(`http://localhost:4000/api/cpap/sleep-sessions?startDate=${startDate}&endDate=${endDate}`)
+      const response = await fetch(`${getCpapApiUrl('sleep-sessions')}?startDate=${startDate}&endDate=${endDate}`)
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)

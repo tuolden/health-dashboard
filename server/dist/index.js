@@ -39,12 +39,19 @@ async function startServer() {
         contentSecurityPolicy: false, // Allow GraphQL Playground
         crossOriginEmbedderPolicy: false
     }));
-    // CORS configuration - Allow both 3000 and 3001 for development
+    // CORS configuration - Allow development and production origins
+    const allowedOrigins = [
+        FRONTEND_URL,
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://dashboard.home',
+        'http://dashboard.home'
+    ];
     app.use((0, cors_1.default)({
-        origin: [FRONTEND_URL, 'http://localhost:3000', 'http://localhost:3001'],
+        origin: allowedOrigins,
         credentials: true
     }));
-    console.log('🌐 CORS configured for origins:', [FRONTEND_URL, 'http://localhost:3000', 'http://localhost:3001']);
+    console.log('🌐 CORS configured for origins:', allowedOrigins);
     // JSON body parsing middleware
     app.use(express_1.default.json({ limit: '10mb' }));
     // Create HTTP server

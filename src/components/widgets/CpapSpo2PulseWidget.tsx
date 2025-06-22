@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeartPulse, faRefresh, faExclamationTriangle, faLungs } from '@fortawesome/free-solid-svg-icons'
+import { getCpapApiUrl } from '../../utils/apiConfig'
 
 // Types for CPAP SpO2 + Pulse data
 interface Spo2PulseData {
@@ -58,7 +59,7 @@ export const CpapSpo2PulseWidget: React.FC<CpapSpo2PulseWidgetProps> = ({ classN
       const endDate = new Date().toISOString().split('T')[0]
       const startDate = '2020-01-01' // Start from beginning of time to capture all data
 
-      const response = await fetch(`http://localhost:4000/api/cpap/spo2-pulse?startDate=${startDate}&endDate=${endDate}`)
+      const response = await fetch(`${getCpapApiUrl('spo2-pulse')}?startDate=${startDate}&endDate=${endDate}`)
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`)

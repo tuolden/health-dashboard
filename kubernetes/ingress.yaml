@@ -19,6 +19,13 @@ spec:
   - host: dashboard.home
     http:
       paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: health-dashboard-api-service
+            port:
+              number: 4000
       - path: /
         pathType: Prefix
         backend:

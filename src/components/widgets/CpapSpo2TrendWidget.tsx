@@ -9,6 +9,7 @@ import React, { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLungs, faRefresh, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { getCpapApiUrl } from '../../utils/apiConfig'
 
 // Types for CPAP SpO2 data
 interface Spo2TrendData {
@@ -60,7 +61,7 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
 
       console.log('🫁 [SpO2 Widget] Using full date range to show all historical data')
 
-      const url = `http://localhost:4000/api/cpap/spo2-trend?startDate=${startDate}&endDate=${endDate}`
+      const url = `${getCpapApiUrl('spo2-trend')}?startDate=${startDate}&endDate=${endDate}`
       console.log('🫁 [SpO2 Widget] Fetching data from:', url)
       console.log('🫁 [SpO2 Widget] Date range:', { startDate, endDate })
       console.log('🫁 [SpO2 Widget] About to make fetch request...')
