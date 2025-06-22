@@ -5,11 +5,12 @@
  * and therapy delivery issues
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area, AreaChart } from 'recharts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faWind, faRefresh, faExclamationTriangle, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 import { getCpapApiUrl } from '../../utils/apiConfig'
+import { useWidgetRefresh } from '../../hooks/useWidgetManager'
 
 // Types for CPAP Leak Rate data
 interface LeakRateData {
@@ -46,7 +47,7 @@ export const CpapLeakRateWidget: React.FC<CpapLeakRateWidgetProps> = ({ classNam
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
 
   // Fetch leak rate data
-  const fetchLeakRateData = async () => {
+  const fetchLeakRateData = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -84,12 +85,15 @@ export const CpapLeakRateWidget: React.FC<CpapLeakRateWidgetProps> = ({ classNam
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  // Register with WebSocket refresh system
+  const { isRefreshing } = useWidgetRefresh('leak-rate', fetchLeakRateData)
 
   // Initial data fetch
   useEffect(() => {
     fetchLeakRateData()
-  }, [])
+  }, [fetchLeakRateData])
 
   // Calculate current stats
   const currentLeakRate = data.length > 0 ? data[data.length - 1]?.leak_rate_avg : null
@@ -161,13 +165,17 @@ export const CpapLeakRateWidget: React.FC<CpapLeakRateWidgetProps> = ({ classNam
         
         <button
           onClick={fetchLeakRateData}
-          disabled={loading}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-          title="Refresh data"
+          disabled={loading || isRefreshing}
+          className={`p-2 transition-colors ${
+            isRefreshing
+              ? 'text-amber-500 dark:text-amber-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          title={isRefreshing ? "Auto-refreshing from WebSocket..." : "Refresh data"}
         >
-          <FontAwesomeIcon 
-            icon={faRefresh} 
-            className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+          <FontAwesomeIcon
+            icon={faRefresh}
+            className={`w-4 h-4 ${(loading || isRefreshing) ? 'animate-spin' : ''}`}
           />
         </button>
       </div>

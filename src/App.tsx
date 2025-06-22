@@ -6,6 +6,9 @@ import { CpapSpo2TrendWidget } from './components/widgets/CpapSpo2TrendWidget'
 import { CpapSpo2PulseWidget } from './components/widgets/CpapSpo2PulseWidget'
 import { CpapLeakRateWidget } from './components/widgets/CpapLeakRateWidget'
 import { CpapSleepSessionWidget } from './components/widgets/CpapSleepSessionWidget'
+import { WebSocketStatus } from './components/WebSocketStatus'
+import { useWebSocket } from './hooks/useWebSocket'
+import { useWidgetManager } from './hooks/useWidgetManager'
 import { getCpapApiUrl, apiConfig } from './utils/apiConfig'
 import './utils/darkModeTest' // Load test utilities
 import './App.css'
@@ -18,6 +21,29 @@ function App() {
 
   // Initialize time-based dark mode - Issue #4
   const { isDarkMode } = useTimeBasedTheme()
+
+  // Initialize WebSocket connection - Issue #8
+  const { isConnected, isConnecting, connectionError } = useWebSocket({
+    onMessage: (message) => {
+      console.log('📨 WebSocket message received in App:', message)
+      setLastUpdated(new Date()) // Update last updated time when data refreshes
+    },
+    onConnect: () => {
+      console.log('✅ WebSocket connected in App')
+      setLastUpdated(new Date())
+    },
+    onDisconnect: () => {
+      console.log('🔌 WebSocket disconnected in App')
+    }
+  })
+
+  // Initialize widget manager - Issue #8
+  const { manualRefresh, refreshingWidgets } = useWidgetManager({
+    onWidgetRefresh: (widgetType) => {
+      console.log(`🔄 Widget refreshing: ${widgetType}`)
+      setLastUpdated(new Date())
+    }
+  })
 
   // Update current time every minute to refresh the "last updated" display
   useEffect(() => {
@@ -164,31 +190,50 @@ function App() {
           <div className="mb-8">
             <h2 className="text-subtitle mb-6 text-gray-900 dark:text-gray-100">CPAP Monitoring</h2>
 
-            {/* Debug Info */}
-            <div className="mb-4 p-4 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                🔍 Debug: Environment: {apiConfig.isProduction ? 'Production' : 'Development'}
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                📡 CPAP widgets fetch from: {apiConfig.baseUrl}/cpap/*
-              </p>
-              <button
-                onClick={async () => {
-                  console.log('🧪 Testing backend connection...')
-                  try {
-                    const response = await fetch(getCpapApiUrl('health'))
-                    const data = await response.json()
-                    console.log('🧪 Backend test successful:', data)
-                    alert('Backend connection successful! Check console for details.')
-                  } catch (err) {
-                    console.error('🧪 Backend test failed:', err)
-                    alert('Backend connection failed! Check console for details.')
-                  }
-                }}
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                🧪 Test Backend Connection
-              </button>
+            {/* Debug Info & WebSocket Status */}
+            <div className="mb-4 space-y-4">
+              {/* Debug Info */}
+              <div className="p-4 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  🔍 Debug: Environment: {apiConfig.isProduction ? 'Production' : 'Development'}
+                </p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  📡 CPAP widgets fetch from: {apiConfig.baseUrl}/cpap/*
+                </p>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={async () => {
+                      console.log('🧪 Testing backend connection...')
+                      try {
+                        const response = await fetch(getCpapApiUrl('health'))
+                        const data = await response.json()
+                        console.log('🧪 Backend test successful:', data)
+                        alert('Backend connection successful! Check console for details.')
+                      } catch (err) {
+                        console.error('🧪 Backend test failed:', err)
+                        alert('Backend connection failed! Check console for details.')
+                      }
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  >
+                    🧪 Test Backend Connection
+                  </button>
+                  <button
+                    onClick={() => manualRefresh('cpap')}
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                    disabled={refreshingWidgets.length > 0}
+                  >
+                    🔄 Manual Refresh CPAP
+                  </button>
+                </div>
+              </div>
+
+              {/* WebSocket Status Component */}
+              <WebSocketStatus
+                showDetails={true}
+                showControls={true}
+                className="w-full"
+              />
             </div>
 
             <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">

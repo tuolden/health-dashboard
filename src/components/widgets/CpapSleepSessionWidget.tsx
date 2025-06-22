@@ -5,11 +5,12 @@
  * CPAP session_start timestamps
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBed, faRefresh, faExclamationTriangle, faMoon, faSun, faClock } from '@fortawesome/free-solid-svg-icons'
 import { getCpapApiUrl } from '../../utils/apiConfig'
+import { useWidgetRefresh } from '../../hooks/useWidgetManager'
 
 // Types for CPAP Sleep Session data
 interface SleepSessionData {
@@ -46,7 +47,7 @@ export const CpapSleepSessionWidget: React.FC<CpapSleepSessionWidgetProps> = ({ 
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
 
   // Fetch sleep session data
-  const fetchSleepSessionData = async () => {
+  const fetchSleepSessionData = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -89,12 +90,15 @@ export const CpapSleepSessionWidget: React.FC<CpapSleepSessionWidgetProps> = ({ 
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  // Register with WebSocket refresh system
+  const { isRefreshing } = useWidgetRefresh('sleep-session', fetchSleepSessionData)
 
   // Initial data fetch
   useEffect(() => {
     fetchSleepSessionData()
-  }, [])
+  }, [fetchSleepSessionData])
 
   // Calculate current stats
   const latestSession = data.length > 0 ? data[data.length - 1] : null
@@ -180,13 +184,17 @@ export const CpapSleepSessionWidget: React.FC<CpapSleepSessionWidgetProps> = ({ 
         
         <button
           onClick={fetchSleepSessionData}
-          disabled={loading}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-          title="Refresh data"
+          disabled={loading || isRefreshing}
+          className={`p-2 transition-colors ${
+            isRefreshing
+              ? 'text-indigo-500 dark:text-indigo-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          title={isRefreshing ? "Auto-refreshing from WebSocket..." : "Refresh data"}
         >
-          <FontAwesomeIcon 
-            icon={faRefresh} 
-            className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+          <FontAwesomeIcon
+            icon={faRefresh}
+            className={`w-4 h-4 ${(loading || isRefreshing) ? 'animate-spin' : ''}`}
           />
         </button>
       </div>

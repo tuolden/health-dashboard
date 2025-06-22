@@ -5,11 +5,12 @@
  * for therapy effectiveness monitoring
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLungs, faRefresh, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import { getCpapApiUrl } from '../../utils/apiConfig'
+import { useWidgetRefresh } from '../../hooks/useWidgetManager'
 
 // Types for CPAP SpO2 data
 interface Spo2TrendData {
@@ -50,7 +51,7 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
   console.log('🫁 [SpO2 Widget] Current state:', { loading, error, dataLength: data.length })
 
   // Fetch SpO2 trend data
-  const fetchSpo2Data = async () => {
+  const fetchSpo2Data = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -114,7 +115,10 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  // Register with WebSocket refresh system
+  const { isRefreshing } = useWidgetRefresh('spo2-trend', fetchSpo2Data)
 
   // Initial data fetch
   useEffect(() => {
@@ -183,13 +187,17 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
         
         <button
           onClick={fetchSpo2Data}
-          disabled={loading}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-          title="Refresh data"
+          disabled={loading || isRefreshing}
+          className={`p-2 transition-colors ${
+            isRefreshing
+              ? 'text-blue-500 dark:text-blue-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          title={isRefreshing ? "Auto-refreshing from WebSocket..." : "Refresh data"}
         >
-          <FontAwesomeIcon 
-            icon={faRefresh} 
-            className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} 
+          <FontAwesomeIcon
+            icon={faRefresh}
+            className={`w-4 h-4 ${(loading || isRefreshing) ? 'animate-spin' : ''}`}
           />
         </button>
       </div>
