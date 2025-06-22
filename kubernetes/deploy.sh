@@ -7,13 +7,16 @@ set -e
 
 echo "🚀 Starting Health Dashboard deployment..."
 
-# Check if we should use local or remote image
+# Check if local registry has the image
 if curl -s http://black:32003/v2/health-dashboard/tags/list | grep -q "latest"; then
     echo "📦 Using local registry image: black:32003/health-dashboard:latest"
-    IMAGE="black:32003/health-dashboard:latest"
 else
-    echo "📦 Using GitHub Container Registry image: ghcr.io/tuolden/health-dashboard:latest"
-    IMAGE="ghcr.io/tuolden/health-dashboard:latest"
+    echo "❌ Error: Docker image not found in local registry!"
+    echo "🔧 Please build and push the image first:"
+    echo "   docker build -t health-dashboard:latest ."
+    echo "   docker tag health-dashboard:latest black:32003/health-dashboard:latest"
+    echo "   docker push black:32003/health-dashboard:latest"
+    exit 1
 fi
 
 # 1. Deploy nginx ingress controller first
@@ -32,31 +35,20 @@ kubectl wait --namespace ingress-nginx \
 echo "📁 Creating goal-app namespace..."
 kubectl create namespace goal-app --dry-run=client -o yaml | kubectl apply -f -
 
-# 4. Update deployment image if using local registry
-if [ "$IMAGE" = "black:32003/health-dashboard:latest" ]; then
-    echo "🔧 Updating deployment to use local registry image..."
-    sed -i.bak "s|ghcr.io/tuolden/health-dashboard:latest|$IMAGE|g" deployment.yaml
-fi
-
-# 5. Deploy Health Dashboard
+# 4. Deploy Health Dashboard
 echo "🏥 Deploying Health Dashboard application..."
 kubectl apply -f deployment.yaml
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
 
-# Restore original deployment file if we modified it
-if [ -f deployment.yaml.bak ]; then
-    mv deployment.yaml.bak deployment.yaml
-fi
-
-# 6. Wait for Health Dashboard to be ready
+# 5. Wait for Health Dashboard to be ready
 echo "⏳ Waiting for Health Dashboard to be ready..."
 kubectl wait --namespace goal-app \
   --for=condition=ready pod \
   --selector=app=health-dashboard \
   --timeout=300s
 
-# 7. Show deployment status
+# 6. Show deployment status
 echo "✅ Deployment complete! Checking status..."
 echo ""
 echo "📊 Nginx Ingress Controller:"

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: health-dashboard
-        image: ghcr.io/tuolden/health-dashboard:latest
+        image: black:32003/health-dashboard:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5301
