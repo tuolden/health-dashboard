@@ -20,6 +20,12 @@ export const getCpapApiUrl = (endpoint: string): string => {
   return `${baseUrl}/cpap/${endpoint}`
 }
 
+// Get the full Workout API URL - Issue #9
+export const getWorkoutApiUrl = (): string => {
+  const baseUrl = getApiBaseUrl()
+  return `${baseUrl}/workouts`
+}
+
 // Export for debugging
 export const apiConfig = {
   baseUrl: getApiBaseUrl(),

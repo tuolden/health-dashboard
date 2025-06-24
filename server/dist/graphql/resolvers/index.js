@@ -12,8 +12,10 @@ const widgetRegistry_1 = require("../widgetRegistry");
 const pubsub_1 = require("../../utils/pubsub");
 const mockData_1 = require("../../utils/mockData");
 const cpapDao_1 = require("../../database/cpapDao");
-// Initialize CPAP DAO
+const polarDao_1 = require("../../database/polarDao");
+// Initialize DAOs
 const cpapDao = new cpapDao_1.CpapDao();
+const polarDao = new polarDao_1.PolarDao();
 // Custom DateTime scalar
 const DateTimeScalar = new graphql_1.GraphQLScalarType({
     name: 'DateTime',
@@ -159,6 +161,76 @@ const Query = {
         catch (error) {
             console.error('❌ Error fetching CPAP sleep sessions:', error);
             throw new Error('Failed to fetch CPAP sleep sessions');
+        }
+    },
+    // Workout Data Queries - Issue #9
+    getWorkoutSessions: async (_, args) => {
+        try {
+            console.log('🏃 Fetching workout sessions:', args.start, 'to', args.end);
+            return await polarDao.detectWorkoutSessions({
+                startDate: args.start,
+                endDate: args.end
+            });
+        }
+        catch (error) {
+            console.error('❌ Error fetching workout sessions:', error);
+            throw new Error('Failed to fetch workout sessions');
+        }
+    },
+    getWeeklyZoneBreakdown: async (_, args) => {
+        try {
+            console.log('📊 Fetching weekly zone breakdown for week starting:', args.weekStart);
+            // Calculate week end date (7 days from start)
+            const startDate = new Date(args.weekStart);
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 6);
+            const sessions = await polarDao.detectWorkoutSessions({
+                startDate: args.weekStart,
+                endDate: endDate.toISOString().split('T')[0]
+            });
+            // Aggregate zones across all sessions in the week
+            const weeklyZones = { Z1: 0, Z2: 0, Z3: 0, Z4: 0, Z5: 0 };
+            sessions.forEach(session => {
+                Object.keys(weeklyZones).forEach(zone => {
+                    weeklyZones[zone] += session.zones[zone];
+                });
+            });
+            return weeklyZones;
+        }
+        catch (error) {
+            console.error('❌ Error fetching weekly zone breakdown:', error);
+            throw new Error('Failed to fetch weekly zone breakdown');
+        }
+    },
+    getTrainingLoadTrend: async (_, args) => {
+        try {
+            console.log('📈 Fetching training load trend for', args.days, 'days');
+            // Calculate date range
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - args.days);
+            const sessions = await polarDao.detectWorkoutSessions({
+                startDate: startDate.toISOString().split('T')[0],
+                endDate: endDate.toISOString().split('T')[0]
+            });
+            // Group sessions by date and calculate daily TRIMP scores
+            const dailyScores = {};
+            sessions.forEach(session => {
+                const date = session.session_start.split('T')[0];
+                if (!dailyScores[date]) {
+                    dailyScores[date] = 0;
+                }
+                dailyScores[date] += session.trimp_score || 0;
+            });
+            // Convert to array format
+            return Object.entries(dailyScores).map(([date, trimp_score]) => ({
+                date,
+                trimp_score
+            })).sort((a, b) => a.date.localeCompare(b.date));
+        }
+        catch (error) {
+            console.error('❌ Error fetching training load trend:', error);
+            throw new Error('Failed to fetch training load trend');
         }
     },
     // System Queries

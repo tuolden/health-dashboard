@@ -55,6 +55,7 @@ export type WidgetCategory =
   | 'tracking'      // Pain zones, medication, supplements
   | 'analytics'     // Charts, trends, summaries
   | 'cpap'          // CPAP monitoring widgets
+  | 'workout'       // Heart rate workout sessions
 
 // Props that every widget component receives
 export interface WidgetProps {

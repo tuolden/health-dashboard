@@ -22,6 +22,7 @@ import { setupWebhooks } from './webhooks/handler'
 import { pubsub } from './utils/pubsub'
 import { testCpapConnection } from './database/cpapDatabase'
 import cpapRoutes from './routes/cpapRoutes'
+import workoutRoutes from './routes/workoutRoutes'
 
 const PORT = process.env['PORT'] || 4000
 const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000'
@@ -194,6 +195,9 @@ async function startServer() {
   // CPAP REST API routes - Issue #7
   app.use('/api/cpap', cpapRoutes)
 
+  // Workout REST API routes - Issue #9
+  app.use('/api/workouts', workoutRoutes)
+
   // Test endpoint for triggering widget refresh - Issue #8
   app.post('/api/test/refresh-widget', (req, res) => {
     const { widgetType = 'cpap', data } = req.body
@@ -243,9 +247,17 @@ async function startServer() {
           health: '/api/cpap/health',
           raw: '/api/cpap/raw'
         },
+        workouts: {
+          summary: '/api/workouts/summary',
+          sessions: '/api/workouts/sessions',
+          zones: '/api/workouts/zones',
+          sports: '/api/workouts/sports',
+          health: '/api/workouts/health',
+          raw: '/api/workouts/raw'
+        },
         health: '/health'
       },
-      documentation: 'See GitHub Issue #7 for CPAP API details'
+      documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details'
     })
   })
 

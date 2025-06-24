@@ -191,6 +191,25 @@ export declare const resolvers: {
             start: string;
             end: string;
         }) => Promise<import("../../types/cpap").SleepSessionData[]>;
+        getWorkoutSessions: (_: any, args: {
+            start: string;
+            end: string;
+        }) => Promise<import("../../types/polar").WorkoutSession[]>;
+        getWeeklyZoneBreakdown: (_: any, args: {
+            weekStart: string;
+        }) => Promise<{
+            Z1: number;
+            Z2: number;
+            Z3: number;
+            Z4: number;
+            Z5: number;
+        }>;
+        getTrainingLoadTrend: (_: any, args: {
+            days: number;
+        }) => Promise<{
+            date: string;
+            trimp_score: number;
+        }[]>;
         health: () => string;
         widgetRegistry: () => import("../widgetRegistry").WidgetRegistryEntry[];
     };

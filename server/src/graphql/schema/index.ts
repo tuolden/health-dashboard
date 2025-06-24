@@ -60,6 +60,37 @@ export const typeDefs = gql`
     sleep_pattern: String! # "early", "normal", "late", "irregular"
   }
 
+  # Workout Session Types - Issue #9
+  type WorkoutSession {
+    sport: String!
+    session_start: String!
+    session_end: String!
+    duration_min: Int!
+    avg_heart_rate: Float
+    calories_burned: Float
+    zones: ZoneBreakdown!
+    recovery_drop_bpm: Float
+    intensity_score: Int
+    trimp_score: Float
+    fat_burn_ratio: Float
+    cardio_ratio: Float
+    bpm_std_dev: Float
+    warmup_duration_sec: Int
+  }
+
+  type ZoneBreakdown {
+    Z1: Int!
+    Z2: Int!
+    Z3: Int!
+    Z4: Int!
+    Z5: Int!
+  }
+
+  type IntensityScorePoint {
+    date: String!
+    trimp_score: Float!
+  }
+
   # Steps Widget Types
   type StepData {
     id: ID!
@@ -243,6 +274,11 @@ export const typeDefs = gql`
     getCPAPSpo2Pulse(start: String!, end: String!): [CPAPSpo2Pulse!]!
     getCPAPLeakRate(start: String!, end: String!): [CPAPLeakRate!]!
     getCPAPSleepSessions(start: String!, end: String!): [CPAPSleepSession!]!
+
+    # Workout Data Queries - Issue #9
+    getWorkoutSessions(start: String!, end: String!): [WorkoutSession!]!
+    getWeeklyZoneBreakdown(weekStart: String!): ZoneBreakdown!
+    getTrainingLoadTrend(days: Int!): [IntensityScorePoint!]!
     
     # System Queries
     health: String!

@@ -25,6 +25,7 @@ const handler_1 = require("./webhooks/handler");
 const pubsub_1 = require("./utils/pubsub");
 const cpapDatabase_1 = require("./database/cpapDatabase");
 const cpapRoutes_1 = __importDefault(require("./routes/cpapRoutes"));
+const workoutRoutes_1 = __importDefault(require("./routes/workoutRoutes"));
 const PORT = process.env['PORT'] || 4000;
 const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000';
 async function startServer() {
@@ -165,6 +166,8 @@ async function startServer() {
     (0, handler_1.setupWebhooks)(app, pubsub_1.pubsub);
     // CPAP REST API routes - Issue #7
     app.use('/api/cpap', cpapRoutes_1.default);
+    // Workout REST API routes - Issue #9
+    app.use('/api/workouts', workoutRoutes_1.default);
     // Test endpoint for triggering widget refresh - Issue #8
     app.post('/api/test/refresh-widget', (req, res) => {
         const { widgetType = 'cpap', data } = req.body;
@@ -211,9 +214,17 @@ async function startServer() {
                     health: '/api/cpap/health',
                     raw: '/api/cpap/raw'
                 },
+                workouts: {
+                    summary: '/api/workouts/summary',
+                    sessions: '/api/workouts/sessions',
+                    zones: '/api/workouts/zones',
+                    sports: '/api/workouts/sports',
+                    health: '/api/workouts/health',
+                    raw: '/api/workouts/raw'
+                },
                 health: '/health'
             },
-            documentation: 'See GitHub Issue #7 for CPAP API details'
+            documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details'
         });
     });
     // Start HTTP server

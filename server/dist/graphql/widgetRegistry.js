@@ -72,6 +72,37 @@ exports.WIDGET_REGISTRY = [
         datasetName: 'cpap_metrics',
         isActive: true
     },
+    // Workout Widgets - Issue #9
+    {
+        widgetType: 'workout-summary',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-heart-rate',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-calories',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-heart-rate-over-time',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-zones',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-fat-burn-ratio',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
     // Additional widgets that might share datasets
     {
         widgetType: 'progressTracker',

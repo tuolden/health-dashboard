@@ -6,6 +6,21 @@ import { CpapSpo2TrendWidget } from './components/widgets/CpapSpo2TrendWidget'
 import { CpapSpo2PulseWidget } from './components/widgets/CpapSpo2PulseWidget'
 import { CpapLeakRateWidget } from './components/widgets/CpapLeakRateWidget'
 import { CpapSleepSessionWidget } from './components/widgets/CpapSleepSessionWidget'
+import { WorkoutSummaryWidget } from './components/widgets/WorkoutSummaryWidget'
+import { WorkoutHeartRateWidget } from './components/widgets/WorkoutHeartRateWidget'
+import { WorkoutCaloriesWidget } from './components/widgets/WorkoutCaloriesWidget'
+import { WorkoutHeartRateTimeWidget } from './components/widgets/WorkoutHeartRateTimeWidget'
+import { WorkoutZonesWidget } from './components/widgets/WorkoutZonesWidget'
+import { WorkoutFatBurnRatioWidget } from './components/widgets/WorkoutFatBurnRatioWidget'
+// Advanced Analytics Widgets - Temporarily disabled
+// import { WorkoutRecoveryWidget } from './components/widgets/WorkoutRecoveryWidget'
+// import { WorkoutIntensityWidget } from './components/widgets/WorkoutIntensityWidget'
+// import { WorkoutTrainingLoadWidget } from './components/widgets/WorkoutTrainingLoadWidget'
+// import { WorkoutWeeklyZonesWidget } from './components/widgets/WorkoutWeeklyZonesWidget'
+// import { WorkoutOvertrainingWidget } from './components/widgets/WorkoutOvertrainingWidget'
+// import { WorkoutVariabilityWidget } from './components/widgets/WorkoutVariabilityWidget'
+// import { WorkoutLoadRecoveryWidget } from './components/widgets/WorkoutLoadRecoveryWidget'
+// import { WorkoutWarmupWidget } from './components/widgets/WorkoutWarmupWidget'
 import { WebSocketStatus } from './components/WebSocketStatus'
 import { useWebSocket } from './hooks/useWebSocket'
 import { useWidgetManager } from './hooks/useWidgetManager'
@@ -254,6 +269,70 @@ function App() {
               <CpapSleepSessionWidget />
             </div>
           </div>
+
+          {/* Workout Widgets Section - Issue #9 */}
+          <div className="mt-12">
+            <h2 className="text-subtitle mb-6 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">
+              💪 Workout Analysis
+            </h2>
+            <p className="text-body text-gray-700 dark:text-dark-text-muted mb-8 transition-colors duration-300">
+              Heart rate workout sessions with zone analysis and training insights.
+            </p>
+
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+              {/* Workout Summary Widget */}
+              <WorkoutSummaryWidget />
+
+              {/* Heart Rate Widget */}
+              <WorkoutHeartRateWidget />
+
+              {/* Calories Burned Widget */}
+              <WorkoutCaloriesWidget />
+
+              {/* Fat Burn vs Cardio Ratio Widget */}
+              <WorkoutFatBurnRatioWidget />
+
+              {/* Heart Rate Over Time Widget */}
+              <div className="lg:col-span-2">
+                <WorkoutHeartRateTimeWidget />
+              </div>
+
+              {/* Heart Rate Zones Widget */}
+              <div className="lg:col-span-2">
+                <WorkoutZonesWidget />
+              </div>
+            </div>
+          </div>
+
+          {/* Advanced Analytics Widgets Section - Issue #9 Phase 3 - Temporarily disabled */}
+          {/*
+          <div className="mt-12">
+            <h2 className="text-subtitle mb-6 text-gray-900 dark:text-dark-text-primary transition-colors duration-300">
+              🔬 Advanced Analytics
+            </h2>
+            <p className="text-body text-gray-700 dark:text-dark-text-muted mb-8 transition-colors duration-300">
+              Advanced training metrics, recovery analysis, and performance optimization insights.
+            </p>
+
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+              <WorkoutRecoveryWidget />
+              <WorkoutIntensityWidget />
+              <WorkoutVariabilityWidget />
+              <WorkoutOvertrainingWidget />
+
+              <div className="lg:col-span-2">
+                <WorkoutTrainingLoadWidget />
+              </div>
+
+              <div className="lg:col-span-2">
+                <WorkoutWeeklyZonesWidget />
+              </div>
+
+              <WorkoutLoadRecoveryWidget />
+              <WorkoutWarmupWidget />
+            </div>
+          </div>
+          */}
 
           {/* Additional Content for More Scrolling */}
           <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
