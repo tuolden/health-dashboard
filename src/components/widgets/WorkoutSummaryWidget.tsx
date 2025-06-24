@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRunning, faStopwatch, faCalendarDay, faDumbbell } from '@fortawesome/free-solid-svg-icons'
+import { faPersonRunning, faStopwatch, faCalendar, faDumbbell } from '@fortawesome/free-solid-svg-icons'
 // import { useWidgetRefresh } from '../../hooks/useWidgetRefresh'
 import { getWorkoutApiUrl } from '../../utils/apiConfig'
 
@@ -100,12 +100,12 @@ export const WorkoutSummaryWidget: React.FC<WorkoutSummaryWidgetProps> = ({ clas
     switch (sport.toLowerCase()) {
       case 'soccer':
       case 'football':
-        return faRunning
+        return faPersonRunning
       case 'gym':
       case 'weight training':
         return faDumbbell
       default:
-        return faRunning
+        return faPersonRunning
     }
   }
 
@@ -129,7 +129,7 @@ export const WorkoutSummaryWidget: React.FC<WorkoutSummaryWidgetProps> = ({ clas
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-            <FontAwesomeIcon icon={faRunning} className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <FontAwesomeIcon icon={faPersonRunning} className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
             <h3 className="text-widget-title font-semibold text-gray-900 dark:text-gray-100">
@@ -156,14 +156,14 @@ export const WorkoutSummaryWidget: React.FC<WorkoutSummaryWidgetProps> = ({ clas
         ) : error ? (
           <div className="text-center py-8">
             <div className="text-red-500 mb-2">
-              <FontAwesomeIcon icon={faRunning} className="w-8 h-8 opacity-50" />
+              <FontAwesomeIcon icon={faPersonRunning} className="w-8 h-8 opacity-50" />
             </div>
             <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         ) : !latestSession ? (
           <div className="text-center py-8">
             <div className="text-gray-400 mb-2">
-              <FontAwesomeIcon icon={faRunning} className="w-8 h-8" />
+              <FontAwesomeIcon icon={faPersonRunning} className="w-8 h-8" />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">No recent workouts</p>
           </div>
@@ -206,7 +206,7 @@ export const WorkoutSummaryWidget: React.FC<WorkoutSummaryWidgetProps> = ({ clas
 
                 {/* Date */}
                 <div className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faCalendarDay} className="w-4 h-4 text-gray-500" />
+                  <FontAwesomeIcon icon={faCalendar} className="w-4 h-4 text-gray-500" />
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Date</p>
                     <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">

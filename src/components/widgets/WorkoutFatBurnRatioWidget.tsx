@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPieChart, faFire, faHeartPulse } from '@fortawesome/free-solid-svg-icons'
+import { faChartPie, faFire, faHeartPulse } from '@fortawesome/free-solid-svg-icons'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
 // import { useWidgetRefresh } from '../../hooks/useWidgetRefresh'
 import { getWorkoutApiUrl } from '../../utils/apiConfig'
@@ -179,7 +179,7 @@ export const WorkoutFatBurnRatioWidget: React.FC<WorkoutFatBurnRatioWidgetProps>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-            <FontAwesomeIcon icon={faPieChart} className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <FontAwesomeIcon icon={faChartPie} className="w-5 h-5 text-green-600 dark:text-green-400" />
           </div>
           <div>
             <h3 className="text-widget-title font-semibold text-gray-900 dark:text-gray-100">
@@ -218,14 +218,14 @@ export const WorkoutFatBurnRatioWidget: React.FC<WorkoutFatBurnRatioWidgetProps>
         ) : error ? (
           <div className="text-center py-8">
             <div className="text-green-500 mb-2">
-              <FontAwesomeIcon icon={faPieChart} className="w-8 h-8 opacity-50" />
+              <FontAwesomeIcon icon={faChartPie} className="w-8 h-8 opacity-50" />
             </div>
             <p className="text-sm text-green-600 dark:text-green-400">{error}</p>
           </div>
         ) : data.length === 0 ? (
           <div className="text-center py-8">
             <div className="text-gray-400 mb-2">
-              <FontAwesomeIcon icon={faPieChart} className="w-8 h-8" />
+              <FontAwesomeIcon icon={faChartPie} className="w-8 h-8" />
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">No ratio data available</p>
           </div>
@@ -280,8 +280,8 @@ export const WorkoutFatBurnRatioWidget: React.FC<WorkoutFatBurnRatioWidgetProps>
               style={{ backgroundColor: `${recommendation.color}20` }}
             >
               <div className="flex items-center gap-2 mb-1">
-                <FontAwesomeIcon 
-                  icon={faPieChart} 
+                <FontAwesomeIcon
+                  icon={faChartPie}
                   className="w-4 h-4"
                   style={{ color: recommendation.color }}
                 />

@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFire, faTarget, faCalendarWeek } from '@fortawesome/free-solid-svg-icons'
+import { faFire, faBullseye, faCalendar } from '@fortawesome/free-solid-svg-icons'
 // import { useWidgetRefresh } from '../../hooks/useWidgetRefresh'
 import { getWorkoutApiUrl } from '../../utils/apiConfig'
 
@@ -170,7 +170,7 @@ export const WorkoutCaloriesWidget: React.FC<WorkoutCaloriesWidgetProps> = ({ cl
             <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faTarget} className="w-4 h-4 text-orange-600" />
+                  <FontAwesomeIcon icon={faBullseye} className="w-4 h-4 text-orange-600" />
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                     Weekly Goal
                   </span>
@@ -215,7 +215,7 @@ export const WorkoutCaloriesWidget: React.FC<WorkoutCaloriesWidgetProps> = ({ cl
             {/* Weekly Summary */}
             <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-2">
-                <FontAwesomeIcon icon={faCalendarWeek} className="w-4 h-4 text-gray-500" />
+                <FontAwesomeIcon icon={faCalendar} className="w-4 h-4 text-gray-500" />
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                   This Week
                 </span>
