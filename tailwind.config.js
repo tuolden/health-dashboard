@@ -4,7 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class', // Enable dark mode with class strategy
+  // darkMode: 'class', // Disabled dark mode temporarily
   theme: {
     extend: {
       // Design System Color Palette - Issue #2

@@ -102,12 +102,12 @@ export const widgetRegistry: WidgetRegistryEntry[] = [
     description: 'Current and resting heart rate monitoring',
     component: HeartRateWidget,
     size: WIDGET_SIZES.SMALL,
-    refreshStrategy: 'websocket',
-    refreshInterval: 60000, // 1 minute fallback
+    refreshStrategy: 'interval', // Temporarily disabled WebSocket
+    refreshInterval: 60000, // 1 minute
     mockDataGenerator: generateMockHeartRateData,
     category: 'vitals',
     priority: 7,
-    isEnabled: true,
+    isEnabled: false, // Temporarily disabled
     version: '1.0.0',
     theme: {
       accentColor: '#FF6B6B',
