@@ -9,12 +9,16 @@ import StickyHeader from './StickyHeader'
  * Optimized for vertical screen layouts with responsive grid system
  */
 const Dashboard: React.FC = () => {
+  console.log('📊 [Dashboard] Component rendering...')
+
   const [widgetData, setWidgetData] = useState<Record<string, any>>({})
   const [widgetStates, setWidgetStates] = useState<Record<string, WidgetDataState>>({})
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  
+
   const enabledWidgets = getEnabledWidgets()
+  console.log('📊 [Dashboard] Enabled widgets:', enabledWidgets.length)
+  console.log('📊 [Dashboard] Widget list:', enabledWidgets.map(w => ({ id: w.id, title: w.title, enabled: w.isEnabled })))
   
   // Initialize widget states
   useEffect(() => {
@@ -98,6 +102,24 @@ const Dashboard: React.FC = () => {
       auto-rows-min
     `
   }
+
+  // Add logging for CSS classes
+  useEffect(() => {
+    console.log('📊 [Dashboard] Checking CSS classes and styles...')
+    const dashboardElement = document.querySelector('.min-h-screen')
+    if (dashboardElement) {
+      const styles = window.getComputedStyle(dashboardElement)
+      console.log('📊 [Dashboard] Dashboard background color:', styles.backgroundColor)
+      console.log('📊 [Dashboard] Dashboard classes:', dashboardElement.className)
+    }
+
+    const headerElement = document.querySelector('header')
+    if (headerElement) {
+      const styles = window.getComputedStyle(headerElement)
+      console.log('📊 [Dashboard] Header background color:', styles.backgroundColor)
+      console.log('📊 [Dashboard] Header classes:', headerElement.className)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-app-background">
