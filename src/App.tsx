@@ -6,12 +6,13 @@ import { CpapSpo2TrendWidget } from './components/widgets/CpapSpo2TrendWidget'
 import { CpapSpo2PulseWidget } from './components/widgets/CpapSpo2PulseWidget'
 import { CpapLeakRateWidget } from './components/widgets/CpapLeakRateWidget'
 import { CpapSleepSessionWidget } from './components/widgets/CpapSleepSessionWidget'
-import { WorkoutSummaryWidget } from './components/widgets/WorkoutSummaryWidget'
-import { WorkoutHeartRateWidget } from './components/widgets/WorkoutHeartRateWidget'
-import { WorkoutCaloriesWidget } from './components/widgets/WorkoutCaloriesWidget'
-import { WorkoutHeartRateTimeWidget } from './components/widgets/WorkoutHeartRateTimeWidget'
-import { WorkoutZonesWidget } from './components/widgets/WorkoutZonesWidget'
-import { WorkoutFatBurnRatioWidget } from './components/widgets/WorkoutFatBurnRatioWidget'
+// Temporarily commented out to test rendering
+// import { WorkoutSummaryWidget } from './components/widgets/WorkoutSummaryWidget'
+// import { WorkoutHeartRateWidget } from './components/widgets/WorkoutHeartRateWidget'
+// import { WorkoutCaloriesWidget } from './components/widgets/WorkoutCaloriesWidget'
+// import { WorkoutHeartRateTimeWidget } from './components/widgets/WorkoutHeartRateTimeWidget'
+// import { WorkoutZonesWidget } from './components/widgets/WorkoutZonesWidget'
+// import { WorkoutFatBurnRatioWidget } from './components/widgets/WorkoutFatBurnRatioWidget'
 // Advanced Analytics Widgets - Temporarily disabled
 // import { WorkoutRecoveryWidget } from './components/widgets/WorkoutRecoveryWidget'
 // import { WorkoutIntensityWidget } from './components/widgets/WorkoutIntensityWidget'
@@ -305,26 +306,30 @@ function App() {
 
             <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
               {/* Workout Summary Widget */}
-              <WorkoutSummaryWidget />
+              <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm">
+                <h3 className="text-widget-title mb-3 text-gray-900 dark:text-gray-100">Workout Summary</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Testing basic widget rendering...</p>
+              </div>
 
               {/* Heart Rate Widget */}
+              <div className="bg-white dark:bg-dark-card p-6 rounded-xl shadow-sm">
+                <h3 className="text-widget-title mb-3 text-gray-900 dark:text-gray-100">Heart Rate</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Testing basic widget rendering...</p>
+              </div>
+
+              {/* Temporarily comment out actual widgets to test rendering */}
+              {/*
+              <WorkoutSummaryWidget />
               <WorkoutHeartRateWidget />
-
-              {/* Calories Burned Widget */}
               <WorkoutCaloriesWidget />
-
-              {/* Fat Burn vs Cardio Ratio Widget */}
               <WorkoutFatBurnRatioWidget />
-
-              {/* Heart Rate Over Time Widget */}
               <div className="lg:col-span-2">
                 <WorkoutHeartRateTimeWidget />
               </div>
-
-              {/* Heart Rate Zones Widget */}
               <div className="lg:col-span-2">
                 <WorkoutZonesWidget />
               </div>
+              */}
             </div>
           </div>
 
