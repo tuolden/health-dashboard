@@ -24,7 +24,7 @@ import { WorkoutFatBurnRatioWidget } from './components/widgets/WorkoutFatBurnRa
 import { WebSocketStatus } from './components/WebSocketStatus'
 import { useWebSocket } from './hooks/useWebSocket'
 import { useWidgetManager } from './hooks/useWidgetManager'
-import { getCpapApiUrl, apiConfig } from './utils/apiConfig'
+import { getCpapApiUrl, getWorkoutApiUrl, apiConfig } from './utils/apiConfig'
 import './utils/darkModeTest' // Load test utilities
 import './App.css'
 
@@ -278,6 +278,30 @@ function App() {
             <p className="text-body text-gray-700 dark:text-dark-text-muted mb-8 transition-colors duration-300">
               Heart rate workout sessions with zone analysis and training insights.
             </p>
+
+            {/* Debug: Test if this section renders at all */}
+            <div className="mb-4 p-4 bg-red-100 dark:bg-red-900/20 rounded-lg">
+              <p className="text-sm text-red-700 dark:text-red-300">
+                🔍 DEBUG: Workout section is rendering. If you see this, the issue is with individual widgets.
+              </p>
+              <button
+                onClick={async () => {
+                  console.log('🧪 Testing workout API connection...')
+                  try {
+                    const response = await fetch(`${getWorkoutApiUrl()}/summary?limit=1`)
+                    const data = await response.json()
+                    console.log('🧪 Workout API test successful:', data)
+                    alert('Workout API connection successful! Check console for details.')
+                  } catch (err) {
+                    console.error('🧪 Workout API test failed:', err)
+                    alert('Workout API connection failed! Check console for details.')
+                  }
+                }}
+                className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                🧪 Test Workout API Connection
+              </button>
+            </div>
 
             <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
               {/* Workout Summary Widget */}
