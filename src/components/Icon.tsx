@@ -25,7 +25,7 @@ import {
   faGear,
   faEye,
   faEyeSlash,
-  faGrid,
+  faGrip,
   faSearch,
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons'
@@ -64,7 +64,7 @@ export const iconMap = {
   // Developer Icons
   eye: faEye,
   eyeSlash: faEyeSlash,
-  grid: faGrid,
+  grid: faGrip,
   search: faSearch,
 } as const
 
