@@ -5,9 +5,9 @@
 
 // Get the API base URL based on environment
 export const getApiBaseUrl = (): string => {
-  // In production, use HTTP for the API subdomain (avoid certificate issues)
+  // In production, use the same domain with /api path (matches ingress configuration)
   if (import.meta.env.PROD) {
-    return 'http://api.dashboard.home/api'
+    return 'http://dashboard.home/api'
   }
 
   // In development, use localhost
