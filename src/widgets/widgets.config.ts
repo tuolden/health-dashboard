@@ -15,6 +15,14 @@ import { CpapSpo2PulseWidget } from '../components/widgets/CpapSpo2PulseWidget'
 import { CpapLeakRateWidget } from '../components/widgets/CpapLeakRateWidget'
 import { CpapSleepSessionWidget } from '../components/widgets/CpapSleepSessionWidget'
 
+// Import Workout widgets - Issue #9
+import { WorkoutSummaryWidget } from '../components/widgets/WorkoutSummaryWidget'
+import { WorkoutHeartRateWidget } from '../components/widgets/WorkoutHeartRateWidget'
+import { WorkoutCaloriesWidget } from '../components/widgets/WorkoutCaloriesWidget'
+import { WorkoutHeartRateTimeWidget } from '../components/widgets/WorkoutHeartRateTimeWidget'
+import { WorkoutZonesWidget } from '../components/widgets/WorkoutZonesWidget'
+import { WorkoutFatBurnRatioWidget } from '../components/widgets/WorkoutFatBurnRatioWidget'
+
 // Temporary placeholder components for widgets not yet created
 const CaloriesWidget: React.FC<any> = () => React.createElement('div', null, 'Calories Widget Coming Soon')
 const HeartRateWidget: React.FC<any> = () => React.createElement('div', null, 'Heart Rate Widget Coming Soon')
@@ -196,6 +204,115 @@ export const widgetRegistry: WidgetRegistryEntry[] = [
       accentColor: '#6366f1',
       animation: 'fade-in'
     }
+  },
+  // Workout Widgets - Issue #9
+  {
+    id: 'workout-summary',
+    title: 'Latest Workout',
+    description: 'Summary of most recent workout session',
+    component: WorkoutSummaryWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 300000, // 5 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'workout',
+    priority: 20,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#3b82f6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'workout-heart-rate',
+    title: 'Average Heart Rate',
+    description: 'Heart rate analysis from recent workouts',
+    component: WorkoutHeartRateWidget,
+    size: WIDGET_SIZES.SMALL,
+    refreshStrategy: 'interval',
+    refreshInterval: 300000, // 5 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'workout',
+    priority: 19,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#ef4444',
+      animation: 'pulse-soft'
+    }
+  },
+  {
+    id: 'workout-calories',
+    title: 'Calories Burned',
+    description: 'Energy expenditure tracking from workouts',
+    component: WorkoutCaloriesWidget,
+    size: WIDGET_SIZES.SMALL,
+    refreshStrategy: 'interval',
+    refreshInterval: 300000, // 5 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'workout',
+    priority: 18,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#f59e0b',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'workout-heart-rate-time',
+    title: 'Heart Rate Over Time',
+    description: 'Heart rate progression during workout sessions',
+    component: WorkoutHeartRateTimeWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 300000, // 5 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'workout',
+    priority: 17,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'workout-zones',
+    title: 'Heart Rate Zones',
+    description: 'Time distribution across heart rate zones',
+    component: WorkoutZonesWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 300000, // 5 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'workout',
+    priority: 16,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#10b981',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'workout-fat-burn-ratio',
+    title: 'Fat Burn vs Cardio',
+    description: 'Training balance between fat burn and cardio zones',
+    component: WorkoutFatBurnRatioWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 300000, // 5 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'workout',
+    priority: 15,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#ec4899',
+      animation: 'fade-in'
+    }
   }
 ]
 
@@ -228,7 +345,7 @@ export const getEnabledWidgets = (): WidgetRegistryEntry[] => {
 export const defaultDashboardLayout = {
   id: 'default-vertical',
   name: 'Default Vertical Layout',
-  description: 'Optimized layout for portrait/vertical screens with CPAP monitoring',
+  description: 'Optimized layout for portrait/vertical screens with CPAP and workout monitoring',
   columns: 2, // Start with 2 columns for most vertical screens
   isDefault: true,
   widgets: [
@@ -239,10 +356,18 @@ export const defaultDashboardLayout = {
     { id: 'heart-rate', column: 1, row: 3, width: 1, height: 1 },
     { id: 'weight-history', column: 1, row: 4, width: 2, height: 2 },
 
+    // Workout Widgets - Issue #9
+    { id: 'workout-summary', column: 1, row: 6, width: 2, height: 1 },
+    { id: 'workout-heart-rate', column: 1, row: 7, width: 1, height: 1 },
+    { id: 'workout-calories', column: 2, row: 7, width: 1, height: 1 },
+    { id: 'workout-heart-rate-time', column: 1, row: 8, width: 2, height: 2 },
+    { id: 'workout-zones', column: 1, row: 10, width: 2, height: 2 },
+    { id: 'workout-fat-burn-ratio', column: 1, row: 12, width: 2, height: 1 },
+
     // CPAP Monitoring Widgets - Issue #7
-    { id: 'cpap-spo2-trend', column: 1, row: 6, width: 2, height: 2 },
-    { id: 'cpap-spo2-pulse', column: 1, row: 8, width: 2, height: 2 },
-    { id: 'cpap-leak-rate', column: 1, row: 10, width: 2, height: 1 },
-    { id: 'cpap-sleep-sessions', column: 1, row: 11, width: 2, height: 1 },
+    { id: 'cpap-spo2-trend', column: 1, row: 13, width: 2, height: 2 },
+    { id: 'cpap-spo2-pulse', column: 1, row: 15, width: 2, height: 2 },
+    { id: 'cpap-leak-rate', column: 1, row: 17, width: 2, height: 1 },
+    { id: 'cpap-sleep-sessions', column: 1, row: 18, width: 2, height: 1 },
   ]
 }
