@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeartPulse, faTrendUp, faTrendDown } from '@fortawesome/free-solid-svg-icons'
+import { faHeartPulse, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons'
 // import { useWidgetRefresh } from '../../hooks/useWidgetRefresh'
 import { getWorkoutApiUrl } from '../../utils/apiConfig'
 
@@ -198,13 +198,13 @@ export const WorkoutHeartRateWidget: React.FC<WorkoutHeartRateWidgetProps> = ({ 
                 <div className="flex items-center justify-center gap-1">
                   {trend.direction === 'up' && (
                     <>
-                      <FontAwesomeIcon icon={faTrendUp} className="w-3 h-3 text-red-500" />
+                      <FontAwesomeIcon icon={faArrowUp} className="w-3 h-3 text-red-500" />
                       <span className="text-sm font-semibold text-red-500">+{trend.change.toFixed(0)}</span>
                     </>
                   )}
                   {trend.direction === 'down' && (
                     <>
-                      <FontAwesomeIcon icon={faTrendDown} className="w-3 h-3 text-green-500" />
+                      <FontAwesomeIcon icon={faArrowDown} className="w-3 h-3 text-green-500" />
                       <span className="text-sm font-semibold text-green-500">-{trend.change.toFixed(0)}</span>
                     </>
                   )}
