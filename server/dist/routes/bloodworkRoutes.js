@@ -348,6 +348,201 @@ router.get('/metrics', async (req, res) => {
     }
 });
 /**
+ * GET /api/labs/summary/:date - Get lab summary for specific date
+ */
+router.get('/summary/:date', async (req, res) => {
+    try {
+        const { date } = req.params;
+        let summary;
+        if (useMockData) {
+            // Generate summary from mock data for the specified date
+            const dateResults = mockData.labResults.filter(result => result.collected_on === date);
+            if (dateResults.length === 0) {
+                res.status(404).json({
+                    success: false,
+                    error: 'No lab data found for the specified date',
+                    date
+                });
+                return;
+            }
+            // Group results by category
+            const categories = {};
+            const categoryStats = {};
+            dateResults.forEach(result => {
+                const metric = mockData.labMetrics.find(m => m.test_name === result.test_name);
+                if (metric) {
+                    if (!categories[metric.category]) {
+                        categories[metric.category] = [];
+                        categoryStats[metric.category] = { total: 0, inRange: 0, outOfRange: 0 };
+                    }
+                    const isInRange = result.numeric_value >= metric.range_min && result.numeric_value <= metric.range_max;
+                    categories[metric.category]?.push({
+                        ...result,
+                        metric,
+                        is_in_range: isInRange
+                    });
+                    const stats = categoryStats[metric.category];
+                    if (stats) {
+                        stats.total++;
+                        if (isInRange) {
+                            stats.inRange++;
+                        }
+                        else {
+                            stats.outOfRange++;
+                        }
+                    }
+                }
+            });
+            summary = {
+                date,
+                totalTests: dateResults.length,
+                categories,
+                categoryStats,
+                overallStats: {
+                    total: dateResults.length,
+                    inRange: Object.values(categoryStats).reduce((sum, cat) => sum + cat.inRange, 0),
+                    outOfRange: Object.values(categoryStats).reduce((sum, cat) => sum + cat.outOfRange, 0)
+                }
+            };
+        }
+        else {
+            // Use database operation (not implemented yet)
+            throw new Error('Database summary not implemented yet');
+        }
+        res.json({
+            success: true,
+            data: summary,
+            data_source: useMockData ? 'mock' : 'database'
+        });
+    }
+    catch (error) {
+        console.error('❌ Lab summary error:', error);
+        if (error instanceof bloodwork_1.BloodworkDataError) {
+            res.status(400).json({
+                success: false,
+                error: error.message,
+                code: error.code
+            });
+        }
+        else {
+            res.status(500).json({
+                success: false,
+                error: 'Failed to fetch lab summary',
+                message: error instanceof Error ? error.message : 'Unknown error'
+            });
+        }
+    }
+});
+/**
+ * GET /api/labs/lifestyle-correlations - Get lifestyle-lab correlations
+ */
+router.get('/lifestyle-correlations', async (req, res) => {
+    try {
+        const { startDate, endDate } = req.query;
+        // For now, return mock correlation data
+        const mockCorrelations = [
+            {
+                lifestyle_factor: 'Sleep Quality',
+                lab_test: 'Cortisol',
+                correlation: -0.72,
+                significance: 0.001,
+                sample_size: 45,
+                description: 'Better sleep quality strongly correlates with lower cortisol levels'
+            },
+            {
+                lifestyle_factor: 'Exercise Frequency',
+                lab_test: 'HDL Cholesterol',
+                correlation: 0.68,
+                significance: 0.003,
+                sample_size: 52,
+                description: 'Regular exercise positively correlates with higher HDL cholesterol'
+            },
+            {
+                lifestyle_factor: 'Stress Level',
+                lab_test: 'Glucose',
+                correlation: 0.45,
+                significance: 0.02,
+                sample_size: 38,
+                description: 'Higher stress levels correlate with elevated glucose levels'
+            }
+        ];
+        res.json({
+            success: true,
+            data: mockCorrelations,
+            count: mockCorrelations.length,
+            data_source: 'mock',
+            timeframe: { startDate, endDate }
+        });
+    }
+    catch (error) {
+        console.error('❌ Lifestyle correlations error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch lifestyle correlations',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+});
+/**
+ * GET /api/labs/hormones - Get hormone analysis
+ */
+router.get('/hormones', async (req, res) => {
+    try {
+        const { category, gender, enhanced } = req.query;
+        // For now, return mock hormone data
+        const mockHormoneData = [
+            {
+                category: 'thyroid',
+                name: 'TSH',
+                value: 2.5,
+                units: 'mIU/L',
+                range_min: 0.4,
+                range_max: 4.0,
+                optimal_min: 1.0,
+                optimal_max: 2.5,
+                status: 'optimal'
+            },
+            {
+                category: 'thyroid',
+                name: 'Free T4',
+                value: 1.2,
+                units: 'ng/dL',
+                range_min: 0.8,
+                range_max: 1.8,
+                optimal_min: 1.0,
+                optimal_max: 1.5,
+                status: 'optimal'
+            },
+            {
+                category: 'reproductive',
+                name: 'Testosterone Total',
+                value: 650,
+                units: 'ng/dL',
+                range_min: 300,
+                range_max: 1000,
+                optimal_min: 500,
+                optimal_max: 800,
+                status: 'optimal'
+            }
+        ];
+        res.json({
+            success: true,
+            data: mockHormoneData,
+            count: mockHormoneData.length,
+            data_source: 'mock',
+            filters: { category, gender, enhanced }
+        });
+    }
+    catch (error) {
+        console.error('❌ Hormone data error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch hormone data',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+});
+/**
  * GET /api/labs/dates - Get available test dates
  */
 router.get('/dates', async (_req, res) => {
