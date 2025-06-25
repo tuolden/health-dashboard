@@ -54,5 +54,11 @@ export { default as LabComparisonWidget } from './LabComparisonWidget'
 export { default as LabInsightsSummaryWidget } from './LabInsightsSummaryWidget'
 export { default as BloodworkSystemSummaryWidget } from './BloodworkSystemSummaryWidget'
 
+// Additional Advanced Widgets (36-39)
+export { default as LabTrendAnalysisWidget } from './LabTrendAnalysisWidget'
+export { default as LabGoalsTrackerWidget } from './LabGoalsTrackerWidget'
+export { default as LabAnomalyDetectionWidget } from './LabAnomalyDetectionWidget'
+export { default as LabDataQualityWidget } from './LabDataQualityWidget'
+
 // Types
 export * from './types'
