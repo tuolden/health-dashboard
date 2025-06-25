@@ -54,7 +54,7 @@ export { default as LabComparisonWidget } from './LabComparisonWidget'
 export { default as LabInsightsSummaryWidget } from './LabInsightsSummaryWidget'
 export { default as BloodworkSystemSummaryWidget } from './BloodworkSystemSummaryWidget'
 
-// Additional Advanced Widgets (36-43)
+// Additional Advanced Widgets (36-47)
 export { default as LabTrendAnalysisWidget } from './LabTrendAnalysisWidget'
 export { default as LabGoalsTrackerWidget } from './LabGoalsTrackerWidget'
 export { default as LabAnomalyDetectionWidget } from './LabAnomalyDetectionWidget'
@@ -63,6 +63,10 @@ export { default as LabReferenceRangesWidget } from './LabReferenceRangesWidget'
 export { default as LabMedicationImpactWidget } from './LabMedicationImpactWidget'
 export { default as LabSeasonalTrendsWidget } from './LabSeasonalTrendsWidget'
 export { default as LabCostAnalysisWidget } from './LabCostAnalysisWidget'
+export { default as LabBiomarkersWidget } from './LabBiomarkersWidget'
+export { default as LabGeneticRiskWidget } from './LabGeneticRiskWidget'
+export { default as LabNutrientDeficiencyWidget } from './LabNutrientDeficiencyWidget'
+export { default as LabHormoneBalanceWidget } from './LabHormoneBalanceWidget'
 
 // Types
 export * from './types'
