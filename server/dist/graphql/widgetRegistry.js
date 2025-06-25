@@ -103,6 +103,47 @@ exports.WIDGET_REGISTRY = [
         datasetName: 'polar_metrics',
         isActive: true
     },
+    // Advanced Analytics Widgets - Issue #9 Phase 3
+    {
+        widgetType: 'workout-recovery',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-intensity',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-training-load',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-weekly-zones',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-overtraining',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-variability',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-load-recovery',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
+    {
+        widgetType: 'workout-warmup',
+        datasetName: 'polar_metrics',
+        isActive: true
+    },
     // Additional widgets that might share datasets
     {
         widgetType: 'progressTracker',

@@ -7,72 +7,168 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  # Frontend Build and Deploy
+  build-frontend:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js 18
       uses: actions/setup-node@v4
       with:
-        node-js-version: '18'
+        node-version: '18'
         cache: 'npm'
-        
+
     - name: Install dependencies
       run: npm ci
-      
+
     - name: Run ESLint
       run: npm run lint
       continue-on-error: true
-      
+
     - name: Run tests
       run: npm test -- --coverage --watchAll=false
       continue-on-error: true
-      
+
     - name: Build React application
       run: npm run build
 
-    - name: Build Docker image
+    - name: Build Frontend Docker image
       run: |
-        # Build the Docker image
-        docker build -t health-dashboard:latest .
-        docker build -t health-dashboard:${{ github.sha }} .
+        # Build the Docker image with correct platform
+        docker build --platform linux/amd64 -t health-dashboard:latest .
+        docker build --platform linux/amd64 -t health-dashboard:${{ github.sha }} .
 
-        echo "✅ Docker image built successfully!"
+        echo "✅ Frontend Docker image built successfully!"
         echo "📦 Image: health-dashboard:latest"
         echo "🔖 SHA: health-dashboard:${{ github.sha }}"
 
-    - name: Save Docker image as artifact
+    - name: Save Frontend Docker image as artifact
       if: github.ref == 'refs/heads/main'
       run: |
         # Save the Docker image to a tar file
         docker save health-dashboard:latest | gzip > health-dashboard-latest.tar.gz
-        echo "💾 Docker image saved as artifact"
+        echo "💾 Frontend Docker image saved as artifact"
 
-    - name: Upload Docker image artifact
+    - name: Upload Frontend Docker image artifact
       if: github.ref == 'refs/heads/main'
       uses: actions/upload-artifact@v4
       with:
-        name: health-dashboard-docker-image
+        name: health-dashboard-frontend-image
         path: health-dashboard-latest.tar.gz
         retention-days: 7
-        
-    - name: Deploy notification
+
+  # Backend Build and Deploy
+  build-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js 18
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'server/package-lock.json'
+
+    - name: Install backend dependencies
+      working-directory: ./server
+      run: npm ci
+
+    - name: Run backend linting
+      working-directory: ./server
+      run: npm run lint
+      continue-on-error: true
+
+    - name: Run backend tests
+      working-directory: ./server
+      run: npm test
+      continue-on-error: true
+
+    - name: Build backend TypeScript
+      working-directory: ./server
+      run: npm run build
+
+    - name: Build Backend Docker image
+      working-directory: ./server
+      run: |
+        # Build the Docker image with correct platform
+        docker build --platform linux/amd64 -t health-dashboard-api:latest .
+        docker build --platform linux/amd64 -t health-dashboard-api:${{ github.sha }} .
+
+        echo "✅ Backend Docker image built successfully!"
+        echo "📦 Image: health-dashboard-api:latest"
+        echo "🔖 SHA: health-dashboard-api:${{ github.sha }}"
+
+    - name: Save Backend Docker image as artifact
       if: github.ref == 'refs/heads/main'
+      working-directory: ./server
+      run: |
+        # Save the Docker image to a tar file
+        docker save health-dashboard-api:latest | gzip > health-dashboard-api-latest.tar.gz
+        echo "💾 Backend Docker image saved as artifact"
+
+    - name: Upload Backend Docker image artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: health-dashboard-backend-image
+        path: server/health-dashboard-api-latest.tar.gz
+        retention-days: 7
+
+  # Deployment Instructions
+  deploy-instructions:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, build-backend]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Deploy notification
       run: |
         echo "✅ Build completed successfully!"
-        echo "📦 Docker image built and saved as artifact"
-        echo "🌐 Target URL: https://dashboard.home"
+        echo "📦 Both Frontend and Backend Docker images built and saved as artifacts"
+        echo "🌐 Target URLs:"
+        echo "   Frontend: https://dashboard.home"
+        echo "   Backend API: https://api.dashboard.home"
         echo ""
         echo "🚀 To deploy on your K3s cluster:"
-        echo "1. Build and push to local registry:"
-        echo "   docker build -t health-dashboard:latest ."
+        echo ""
+        echo "1. Build and push images to your local registry:"
+        echo "   # Frontend"
+        echo "   docker build --platform linux/amd64 -t health-dashboard:latest ."
         echo "   docker tag health-dashboard:latest black:32003/health-dashboard:latest"
         echo "   docker push black:32003/health-dashboard:latest"
         echo ""
-        echo "2. Deploy with automated script:"
-        echo "   cd kubernetes && ./deploy.sh"
+        echo "   # Backend"
+        echo "   cd server"
+        echo "   docker build --platform linux/amd64 -t health-dashboard-api:latest ."
+        echo "   docker tag health-dashboard-api:latest black:32003/health-dashboard-api:latest"
+        echo "   docker push black:32003/health-dashboard-api:latest"
+        echo "   cd .."
         echo ""
-        echo "💾 Or download the Docker image artifact from this workflow run"
+        echo "2. Deploy using Kustomize (Recommended):"
+        echo "   kubectl apply -k kubernetes/"
+        echo ""
+        echo "3. Or deploy manually with YAML files:"
+        echo "   kubectl create namespace goal-app"
+        echo "   kubectl apply -f kubernetes/deployment.yaml"
+        echo "   kubectl apply -f kubernetes/service.yaml"
+        echo "   kubectl apply -f kubernetes/ingress.yaml"
+        echo "   kubectl apply -f server/kubernetes/deployment.yaml"
+        echo "   kubectl apply -f server/kubernetes/service.yaml"
+        echo "   kubectl apply -f server/kubernetes/ingress.yaml"
+        echo ""
+        echo "4. Update existing deployments:"
+        echo "   kubectl rollout restart deployment health-dashboard -n goal-app"
+        echo "   kubectl rollout restart deployment health-dashboard-api -n goal-app"
+        echo ""
+        echo "💾 Or download the Docker image artifacts from this workflow run"
+        echo ""
+        echo "🔧 Key fixes in this deployment:"
+        echo "   - Frontend API config updated to use api.dashboard.home"
+        echo "   - Backend includes latest workout API routes"
+        echo "   - Both images built for correct architecture (linux/amd64)"
