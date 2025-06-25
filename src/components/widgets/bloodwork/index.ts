@@ -43,11 +43,16 @@ export { default as Top3ConcernsWidget } from './Top3ConcernsWidget'
 export { default as ProgressTrackingWidget } from './ProgressTrackingWidget'
 export { default as HealthScoreSummaryWidget } from './HealthScoreSummaryWidget'
 
-// Advanced Analysis Widgets (27-30)
+// Advanced Analysis Widgets (27-34)
 export { default as LabTimelineWidget } from './LabTimelineWidget'
 export { default as CorrelationAnalysisWidget } from './CorrelationAnalysisWidget'
 export { default as PredictiveTrendsWidget } from './PredictiveTrendsWidget'
 export { default as PopulationComparisonWidget } from './PopulationComparisonWidget'
+export { default as SupplementEffectsWidget } from './SupplementEffectsWidget'
+export { default as LabReportSummaryWidget } from './LabReportSummaryWidget'
+export { default as LabComparisonWidget } from './LabComparisonWidget'
+export { default as LabInsightsSummaryWidget } from './LabInsightsSummaryWidget'
+export { default as BloodworkSystemSummaryWidget } from './BloodworkSystemSummaryWidget'
 
 // Types
 export * from './types'
@@ -88,5 +93,10 @@ export {
   LabTimelineWidget,
   CorrelationAnalysisWidget,
   PredictiveTrendsWidget,
-  PopulationComparisonWidget
+  PopulationComparisonWidget,
+  SupplementEffectsWidget,
+  LabReportSummaryWidget,
+  LabComparisonWidget,
+  LabInsightsSummaryWidget,
+  BloodworkSystemSummaryWidget
 }
