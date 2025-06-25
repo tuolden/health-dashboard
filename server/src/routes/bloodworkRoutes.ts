@@ -85,62 +85,7 @@ router.get('/', async (_req: Request, res: Response) => {
   }
 })
 
-/**
- * GET /api/labs/summary/:date - Get lab summary for specific date
- */
-router.get('/summary/:date', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { date } = req.params
 
-    if (!date) {
-      res.status(400).json({
-        success: false,
-        error: 'Date parameter is required'
-      })
-      return
-    }
-
-    // Validate date format
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      res.status(400).json({
-        success: false,
-        error: 'Invalid date format. Use YYYY-MM-DD'
-      })
-      return
-    }
-
-    const summary = await bloodworkDao.getLabSummary(date)
-    
-    if (!summary) {
-      res.status(404).json({
-        success: false,
-        error: 'No lab results found for the specified date'
-      })
-      return
-    }
-
-    res.json({
-      success: true,
-      data: summary
-    })
-  } catch (error) {
-    console.error('❌ Lab summary error:', error)
-    
-    if (error instanceof BloodworkDataError) {
-      res.status(400).json({
-        success: false,
-        error: error.message,
-        code: error.code
-      })
-    } else {
-      res.status(500).json({
-        success: false,
-        error: 'Failed to fetch lab summary',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      })
-    }
-  }
-})
 
 /**
  * GET /api/labs/results - Get lab results with filtering
