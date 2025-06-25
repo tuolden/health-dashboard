@@ -13,7 +13,7 @@ const router = (0, express_1.Router)();
 const bloodworkDao = new bloodworkDao_1.BloodworkDao();
 // Generate mock data once at startup
 const mockData = (0, mockData_1.generateBloodworkData)(180); // 6 months of data
-let useMockData = false;
+let useMockData = true; // Default to mock data
 // Test database connection and fallback to mock data if needed
 const initializeBloodworkData = async () => {
     try {
@@ -26,14 +26,31 @@ const initializeBloodworkData = async () => {
         useMockData = true;
     }
 };
-// Initialize on startup
-initializeBloodworkData();
+// Initialize on startup (non-blocking)
+initializeBloodworkData().catch(() => {
+    console.log('⚠️ Bloodwork initialization failed, using mock data');
+    useMockData = true;
+});
+// Helper function to safely execute database operations with fallback
+const safeDbOperation = async (dbOperation, mockFallback) => {
+    if (useMockData) {
+        return mockFallback();
+    }
+    try {
+        return await dbOperation();
+    }
+    catch (error) {
+        console.log('⚠️ Database operation failed, falling back to mock data:', error);
+        useMockData = true;
+        return mockFallback();
+    }
+};
 /**
  * GET /api/labs - API status and info
  */
 router.get('/', async (_req, res) => {
     try {
-        const availableDates = useMockData ? mockData.availableDates : await bloodworkDao.getAvailableDates();
+        const availableDates = await safeDbOperation(() => bloodworkDao.getAvailableDates(), () => mockData.availableDates);
         res.json({
             success: true,
             message: 'Bloodwork Lab API - Issue #13',
@@ -335,7 +352,7 @@ router.get('/metrics', async (req, res) => {
  */
 router.get('/dates', async (_req, res) => {
     try {
-        const dates = useMockData ? mockData.availableDates : await bloodworkDao.getAvailableDates();
+        const dates = await safeDbOperation(() => bloodworkDao.getAvailableDates(), () => mockData.availableDates);
         res.json({
             success: true,
             data: dates,

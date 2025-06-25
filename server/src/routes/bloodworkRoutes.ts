@@ -14,7 +14,7 @@ const bloodworkDao = new BloodworkDao()
 
 // Generate mock data once at startup
 const mockData = generateBloodworkData(180) // 6 months of data
-let useMockData = false
+let useMockData = true // Default to mock data
 
 // Test database connection and fallback to mock data if needed
 const initializeBloodworkData = async () => {
@@ -28,15 +28,36 @@ const initializeBloodworkData = async () => {
   }
 }
 
-// Initialize on startup
-initializeBloodworkData()
+// Initialize on startup (non-blocking)
+initializeBloodworkData().catch(() => {
+  console.log('⚠️ Bloodwork initialization failed, using mock data')
+  useMockData = true
+})
+
+// Helper function to safely execute database operations with fallback
+const safeDbOperation = async <T>(dbOperation: () => Promise<T>, mockFallback: () => T): Promise<T> => {
+  if (useMockData) {
+    return mockFallback()
+  }
+
+  try {
+    return await dbOperation()
+  } catch (error) {
+    console.log('⚠️ Database operation failed, falling back to mock data:', error)
+    useMockData = true
+    return mockFallback()
+  }
+}
 
 /**
  * GET /api/labs - API status and info
  */
 router.get('/', async (_req: Request, res: Response) => {
   try {
-    const availableDates = useMockData ? mockData.availableDates : await bloodworkDao.getAvailableDates()
+    const availableDates = await safeDbOperation(
+      () => bloodworkDao.getAvailableDates(),
+      () => mockData.availableDates
+    )
 
     res.json({
       success: true,
@@ -358,7 +379,10 @@ router.get('/metrics', async (req: Request, res: Response) => {
  */
 router.get('/dates', async (_req: Request, res: Response) => {
   try {
-    const dates = useMockData ? mockData.availableDates : await bloodworkDao.getAvailableDates()
+    const dates = await safeDbOperation(
+      () => bloodworkDao.getAvailableDates(),
+      () => mockData.availableDates
+    )
 
     res.json({
       success: true,
