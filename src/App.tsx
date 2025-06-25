@@ -6,9 +6,8 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log('🚀 [App] Component mounted - DEPLOYMENT TEST 12345')
+    console.log('🚀 [App] Component mounted')
     console.log('🎨 [App] FORCE DISABLING DARK MODE...')
-    alert('🚀 DEPLOYMENT TEST: App component loaded successfully!')
 
     const htmlElement = document.documentElement
 
