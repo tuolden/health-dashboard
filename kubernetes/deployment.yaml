@@ -33,7 +33,7 @@ spec:
         - name: VITE_GRAPHQL_WS_URL
           value: "wss://api.dashboard.home/graphql"
         - name: FORCE_REDEPLOY
-          value: "v-2025-06-25-00-02-api-domain-fix"
+          value: "v-2025-06-25-01-25-scale-widgets-complete"
         resources:
           requests:
             memory: "128Mi"
