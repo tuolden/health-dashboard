@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: health-dashboard-config
+  namespace: goal-app
+  labels:
+    app: health-dashboard
+    version: v1
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    deployment.kubernetes.io/revision: "v-2025-06-25-01-25-scale-widgets-complete"
+data:
+  # Application configuration
+  APP_ENV: "production"
+  VITE_GRAPHQL_URL: "https://api.dashboard.home/graphql"
+  VITE_GRAPHQL_WS_URL: "wss://api.dashboard.home/graphql"
+  
+  # Deployment tracking
+  DEPLOYMENT_VERSION: "v-2025-06-25-10-56-c919f50e"
+  DEPLOYMENT_TIMESTAMP: "2025-06-25T10:56:29Z"
+  
+  # Widget configuration
+  WIDGET_CATEGORIES: "cpap,workout,scale"
+  SCALE_WIDGETS_ENABLED: "true"
+  TOTAL_WIDGETS: "25"
+  
+  # API endpoints
+  SCALE_API_BASE: "/api/scale"
+  GRAPHQL_ENDPOINT: "/graphql"

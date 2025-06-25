@@ -6,6 +6,10 @@ metadata:
   labels:
     app: health-dashboard
     version: v1
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook: Sync
+    deployment.kubernetes.io/revision: "v-2025-06-25-10-56-c919f50e"
 spec:
   replicas: 1
   selector:
@@ -16,6 +20,10 @@ spec:
       labels:
         app: health-dashboard
         version: v1
+      annotations:
+        argocd.argoproj.io/tracking-id: "health-dashboard:apps/Deployment:goal-app/health-dashboard"
+        deployment.kubernetes.io/revision: "v-2025-06-25-10-56-c919f50e"
+        kubectl.kubernetes.io/restartedAt: "2025-06-25T10:56:29Z"
     spec:
       containers:
       - name: health-dashboard
@@ -27,13 +35,25 @@ spec:
           protocol: TCP
         env:
         - name: APP_ENV
-          value: "production"
+          valueFrom:
+            configMapKeyRef:
+              name: health-dashboard-config
+              key: APP_ENV
         - name: VITE_GRAPHQL_URL
-          value: "https://api.dashboard.home/graphql"
+          valueFrom:
+            configMapKeyRef:
+              name: health-dashboard-config
+              key: VITE_GRAPHQL_URL
         - name: VITE_GRAPHQL_WS_URL
-          value: "wss://api.dashboard.home/graphql"
+          valueFrom:
+            configMapKeyRef:
+              name: health-dashboard-config
+              key: VITE_GRAPHQL_WS_URL
         - name: FORCE_REDEPLOY
-          value: "v-2025-06-25-01-25-scale-widgets-complete"
+          valueFrom:
+            configMapKeyRef:
+              name: health-dashboard-config
+              key: DEPLOYMENT_VERSION
         resources:
           requests:
             memory: "128Mi"

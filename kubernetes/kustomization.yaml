@@ -8,9 +8,10 @@ kind: Kustomization
 namespace: goal-app
 
 resources:
-  # Frontend only
-  - deployment.yaml
+  # Frontend resources in order
+  - configmap.yaml
   - service.yaml
+  - deployment.yaml
   - ingress.yaml
 
 # Common labels for all resources
@@ -19,8 +20,25 @@ labels:
       app.kubernetes.io/name: health-dashboard
       app.kubernetes.io/version: "1.0.0"
       app.kubernetes.io/component: frontend
+      app.kubernetes.io/managed-by: argocd
+
+# Common annotations for ArgoCD tracking
+annotations:
+  - pairs:
+      argocd.argoproj.io/sync-wave: "1"
+      deployment.kubernetes.io/revision: "v-2025-06-25-10-56-c919f50e"
 
 # Force image updates on deployment
 images:
   - name: black:32003/health-dashboard
     newTag: latest
+
+# Patch to ensure proper restart behavior
+patchesStrategicMerge:
+  - |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: health-dashboard
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-06-25T10:56:29Z"
