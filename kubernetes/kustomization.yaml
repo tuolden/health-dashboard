@@ -23,22 +23,11 @@ labels:
       app.kubernetes.io/managed-by: argocd
 
 # Common annotations for ArgoCD tracking
-annotations:
-  - pairs:
-      argocd.argoproj.io/sync-wave: "1"
-      deployment.kubernetes.io/revision: "v-2025-06-25-10-56-c919f50e"
+commonAnnotations:
+  argocd.argoproj.io/sync-wave: "1"
+  deployment.kubernetes.io/revision: "v-2025-06-25-10-56-c919f50e"
 
 # Force image updates on deployment
 images:
   - name: black:32003/health-dashboard
     newTag: latest
-
-# Patch to ensure proper restart behavior
-patchesStrategicMerge:
-  - |-
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: health-dashboard
-      annotations:
-        kubectl.kubernetes.io/restartedAt: "2025-06-25T10:56:29Z"
