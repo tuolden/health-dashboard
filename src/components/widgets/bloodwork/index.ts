@@ -43,6 +43,12 @@ export { default as Top3ConcernsWidget } from './Top3ConcernsWidget'
 export { default as ProgressTrackingWidget } from './ProgressTrackingWidget'
 export { default as HealthScoreSummaryWidget } from './HealthScoreSummaryWidget'
 
+// Advanced Analysis Widgets (27-30)
+export { default as LabTimelineWidget } from './LabTimelineWidget'
+export { default as CorrelationAnalysisWidget } from './CorrelationAnalysisWidget'
+export { default as PredictiveTrendsWidget } from './PredictiveTrendsWidget'
+export { default as PopulationComparisonWidget } from './PopulationComparisonWidget'
+
 // Types
 export * from './types'
 
@@ -78,5 +84,9 @@ export {
   WhatsChangedWidget,
   Top3ConcernsWidget,
   ProgressTrackingWidget,
-  HealthScoreSummaryWidget
+  HealthScoreSummaryWidget,
+  LabTimelineWidget,
+  CorrelationAnalysisWidget,
+  PredictiveTrendsWidget,
+  PopulationComparisonWidget
 }
