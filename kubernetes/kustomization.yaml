@@ -1,31 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Health Dashboard Complete Deployment
+# Health Dashboard Frontend Deployment
 # Deploy with: kubectl apply -k kubernetes/
+# For complete deployment (frontend + backend), run from root: kubectl apply -k .
 
 namespace: goal-app
 
 resources:
-  # Frontend
+  # Frontend only
   - deployment.yaml
   - service.yaml
   - ingress.yaml
 
-  # Backend
-  - ../server/kubernetes/deployment.yaml
-  - ../server/kubernetes/service.yaml
-  - ../server/kubernetes/ingress.yaml
-
 # Common labels for all resources
-commonLabels:
-  app.kubernetes.io/name: health-dashboard
-  app.kubernetes.io/version: "1.0.0"
-  app.kubernetes.io/component: web-app
+labels:
+  - pairs:
+      app.kubernetes.io/name: health-dashboard
+      app.kubernetes.io/version: "1.0.0"
+      app.kubernetes.io/component: frontend
 
 # Force image updates on deployment
 images:
   - name: black:32003/health-dashboard
-    newTag: latest
-  - name: black:32003/health-dashboard-api
     newTag: latest
