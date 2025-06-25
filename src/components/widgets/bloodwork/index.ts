@@ -28,6 +28,15 @@ export { default as HDLCholesterolWidget } from './HDLCholesterolWidget'
 export { default as LDLCholesterolWidget } from './LDLCholesterolWidget'
 export { default as PlateletCountWidget } from './PlateletCountWidget'
 
+// Risk Assessment Widgets (16-21)
+export { default as LabAlertsWidget } from './LabAlertsWidget'
+export { default as AnemiaRiskWidget } from './AnemiaRiskWidget'
+export { default as CardiovascularRiskWidget } from './CardiovascularRiskWidget'
+export { default as DiabetesWatchWidget } from './DiabetesWatchWidget'
+export { default as LiverStressIndexWidget } from './LiverStressIndexWidget'
+export { default as OutOfRangeTrackerWidget } from './OutOfRangeTrackerWidget'
+export { default as KidneyFunctionRiskWidget } from './KidneyFunctionRiskWidget'
+
 // Types
 export * from './types'
 
@@ -52,5 +61,12 @@ export {
   CreatinineWidget,
   HDLCholesterolWidget,
   LDLCholesterolWidget,
-  PlateletCountWidget
+  PlateletCountWidget,
+  LabAlertsWidget,
+  AnemiaRiskWidget,
+  CardiovascularRiskWidget,
+  DiabetesWatchWidget,
+  LiverStressIndexWidget,
+  OutOfRangeTrackerWidget,
+  KidneyFunctionRiskWidget
 }
