@@ -8,18 +8,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const bloodworkDao_1 = require("../database/bloodworkDao");
 const bloodwork_1 = require("../types/bloodwork");
+const mockData_1 = require("../utils/mockData");
 const router = (0, express_1.Router)();
 const bloodworkDao = new bloodworkDao_1.BloodworkDao();
+// Generate mock data once at startup
+const mockData = (0, mockData_1.generateBloodworkData)(180); // 6 months of data
+let useMockData = false;
+// Test database connection and fallback to mock data if needed
+const initializeBloodworkData = async () => {
+    try {
+        await bloodworkDao.getAvailableDates();
+        console.log('✅ Bloodwork database connection successful');
+        useMockData = false;
+    }
+    catch (error) {
+        console.log('⚠️ Bloodwork database unavailable, using mock data');
+        useMockData = true;
+    }
+};
+// Initialize on startup
+initializeBloodworkData();
 /**
  * GET /api/labs - API status and info
  */
 router.get('/', async (_req, res) => {
     try {
-        const availableDates = await bloodworkDao.getAvailableDates();
+        const availableDates = useMockData ? mockData.availableDates : await bloodworkDao.getAvailableDates();
         res.json({
             success: true,
             message: 'Bloodwork Lab API - Issue #13',
             version: '1.0.0',
+            data_source: useMockData ? 'mock' : 'database',
             endpoints: [
                 'GET /api/labs/summary/:date - Lab summary for specific date',
                 'GET /api/labs/results - Lab results with filtering',
@@ -112,14 +131,43 @@ router.get('/results', async (req, res) => {
             filters.offset = parseInt(offset);
         if (onlyAbnormal === 'true')
             filters.onlyAbnormal = true;
-        const results = enhanced === 'true'
-            ? await bloodworkDao.getEnhancedLabResults(filters)
-            : await bloodworkDao.getLabResults(filters);
+        let results;
+        if (useMockData) {
+            // Apply filters to mock data
+            let filteredResults = mockData.labResults.filter(result => {
+                if (filters.startDate && result.collected_on < filters.startDate)
+                    return false;
+                if (filters.endDate && result.collected_on > filters.endDate)
+                    return false;
+                if (filters.testNames && !filters.testNames.includes(result.test_name))
+                    return false;
+                return true;
+            });
+            // Apply pagination
+            const startIndex = filters.offset || 0;
+            const endIndex = startIndex + (filters.limit || 50);
+            results = filteredResults.slice(startIndex, endIndex);
+            // Add enhanced data if requested
+            if (enhanced === 'true') {
+                results = results.map(result => ({
+                    ...result,
+                    metric: mockData.labMetrics.find(m => m.test_name === result.test_name),
+                    is_in_range: result.numeric_value >= (mockData.labMetrics.find(m => m.test_name === result.test_name)?.range_min || 0) &&
+                        result.numeric_value <= (mockData.labMetrics.find(m => m.test_name === result.test_name)?.range_max || 999)
+                }));
+            }
+        }
+        else {
+            results = enhanced === 'true'
+                ? await bloodworkDao.getEnhancedLabResults(filters)
+                : await bloodworkDao.getLabResults(filters);
+        }
         res.json({
             success: true,
             data: results,
             count: results.length,
-            filters: filters
+            filters: filters,
+            data_source: useMockData ? 'mock' : 'database'
         });
     }
     catch (error) {
@@ -145,12 +193,28 @@ router.get('/results', async (req, res) => {
  */
 router.get('/latest', async (_req, res) => {
     try {
-        const results = await bloodworkDao.getLatestLabResults();
+        let results;
+        if (useMockData) {
+            // Get latest date from mock data
+            const latestDate = mockData.availableDates[0];
+            results = mockData.labResults
+                .filter(result => result.collected_on === latestDate)
+                .map(result => ({
+                ...result,
+                metric: mockData.labMetrics.find(m => m.test_name === result.test_name),
+                is_in_range: result.numeric_value >= (mockData.labMetrics.find(m => m.test_name === result.test_name)?.range_min || 0) &&
+                    result.numeric_value <= (mockData.labMetrics.find(m => m.test_name === result.test_name)?.range_max || 999)
+            }));
+        }
+        else {
+            results = await bloodworkDao.getLatestLabResults();
+        }
         res.json({
             success: true,
             data: results,
             count: results.length,
-            date: results.length > 0 ? results[0]?.collected_on : null
+            date: results.length > 0 ? results[0]?.collected_on : null,
+            data_source: useMockData ? 'mock' : 'database'
         });
     }
     catch (error) {
@@ -230,12 +294,22 @@ router.get('/trends/:testName', async (req, res) => {
 router.get('/metrics', async (req, res) => {
     try {
         const { testNames } = req.query;
-        const testNamesArray = testNames ? testNames.split(',') : undefined;
-        const metrics = await bloodworkDao.getLabMetrics(testNamesArray);
+        let metrics;
+        if (useMockData) {
+            const testNamesArray = testNames ? testNames.split(',') : undefined;
+            metrics = testNamesArray
+                ? mockData.labMetrics.filter(m => testNamesArray.includes(m.test_name))
+                : mockData.labMetrics;
+        }
+        else {
+            const testNamesArray = testNames ? testNames.split(',') : undefined;
+            metrics = await bloodworkDao.getLabMetrics(testNamesArray);
+        }
         res.json({
             success: true,
             data: metrics,
-            count: metrics.length
+            count: metrics.length,
+            data_source: useMockData ? 'mock' : 'database'
         });
     }
     catch (error) {
@@ -261,11 +335,12 @@ router.get('/metrics', async (req, res) => {
  */
 router.get('/dates', async (_req, res) => {
     try {
-        const dates = await bloodworkDao.getAvailableDates();
+        const dates = useMockData ? mockData.availableDates : await bloodworkDao.getAvailableDates();
         res.json({
             success: true,
             data: dates,
-            count: dates.length
+            count: dates.length,
+            data_source: useMockData ? 'mock' : 'database'
         });
     }
     catch (error) {

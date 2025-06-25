@@ -166,4 +166,23 @@ export declare const generateActivityData: (date?: Date) => {
     }[];
     caloriesBurned: number;
 };
+export declare const generateBloodworkData: (daysBack?: number) => {
+    labResults: {
+        id: number;
+        test_name: string;
+        value: string;
+        collected_on: string;
+        numeric_value: number;
+    }[];
+    labMetrics: {
+        id: number;
+        test_name: string;
+        range_min: number;
+        range_max: number;
+        units: string;
+        category: string;
+        description: string;
+    }[];
+    availableDates: string[];
+};
 //# sourceMappingURL=mockData.d.ts.map

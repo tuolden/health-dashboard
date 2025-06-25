@@ -270,7 +270,7 @@ export const generateSleepData = (_timeRange?: any) => {
 // Activity Mock Data
 export const generateActivityData = (date?: Date) => {
   const targetDate = date || new Date()
-  
+
   const workouts = [
     {
       id: uuidv4(),
@@ -292,5 +292,107 @@ export const generateActivityData = (date?: Date) => {
     sedentaryMinutes: 1440 - activeMinutes - 480, // 24h - active - sleep
     workouts,
     caloriesBurned
+  }
+}
+
+// Bloodwork Mock Data - Issue #13
+export const generateBloodworkData = (daysBack: number = 90) => {
+  // Common lab test reference ranges and typical values
+  const labTests = [
+    // Complete Blood Count (CBC)
+    { name: 'WBC', min: 4.0, max: 11.0, units: 'K/uL', category: 'CBC' },
+    { name: 'RBC', min: 4.2, max: 5.8, units: 'M/uL', category: 'CBC' },
+    { name: 'Hemoglobin', min: 12.0, max: 17.0, units: 'g/dL', category: 'CBC' },
+    { name: 'Hematocrit', min: 36.0, max: 50.0, units: '%', category: 'CBC' },
+    { name: 'Platelet Count', min: 150, max: 450, units: 'K/uL', category: 'CBC' },
+    { name: 'Neutrophils', min: 45, max: 70, units: '%', category: 'CBC' },
+    { name: 'Lymphocytes', min: 20, max: 45, units: '%', category: 'CBC' },
+
+    // Lipid Panel
+    { name: 'Total Cholesterol', min: 100, max: 200, units: 'mg/dL', category: 'LIPID' },
+    { name: 'LDL Cholesterol', min: 0, max: 100, units: 'mg/dL', category: 'LIPID' },
+    { name: 'HDL Cholesterol', min: 40, max: 100, units: 'mg/dL', category: 'LIPID' },
+    { name: 'Triglycerides', min: 0, max: 150, units: 'mg/dL', category: 'LIPID' },
+
+    // Comprehensive Metabolic Panel (CMP)
+    { name: 'Glucose', min: 70, max: 100, units: 'mg/dL', category: 'CMP' },
+    { name: 'BUN', min: 7, max: 20, units: 'mg/dL', category: 'CMP' },
+    { name: 'Creatinine', min: 0.6, max: 1.3, units: 'mg/dL', category: 'CMP' },
+    { name: 'Sodium', min: 136, max: 145, units: 'mmol/L', category: 'CMP' },
+    { name: 'Potassium', min: 3.5, max: 5.1, units: 'mmol/L', category: 'CMP' },
+    { name: 'Chloride', min: 98, max: 107, units: 'mmol/L', category: 'CMP' },
+
+    // Liver Function
+    { name: 'AST', min: 10, max: 40, units: 'U/L', category: 'LIVER' },
+    { name: 'ALT', min: 7, max: 56, units: 'U/L', category: 'LIVER' },
+    { name: 'Alkaline Phosphatase', min: 44, max: 147, units: 'U/L', category: 'LIVER' },
+    { name: 'Bilirubin Total', min: 0.2, max: 1.2, units: 'mg/dL', category: 'LIVER' },
+
+    // Thyroid Function
+    { name: 'TSH', min: 0.4, max: 4.0, units: 'mIU/L', category: 'THYROID' },
+    { name: 'Free T4', min: 0.8, max: 1.8, units: 'ng/dL', category: 'THYROID' },
+    { name: 'Free T3', min: 2.3, max: 4.2, units: 'pg/mL', category: 'THYROID' },
+
+    // Hormone Panel
+    { name: 'Testosterone Total', min: 300, max: 1000, units: 'ng/dL', category: 'HORMONE' },
+    { name: 'PSA', min: 0.0, max: 4.0, units: 'ng/mL', category: 'HORMONE' },
+    { name: 'Vitamin D', min: 30, max: 100, units: 'ng/mL', category: 'HORMONE' }
+  ]
+
+  // Generate test dates (every 30-90 days)
+  const dates: string[] = []
+  const today = new Date()
+
+  for (let i = 0; i < Math.floor(daysBack / 60); i++) {
+    const testDate = new Date(today)
+    testDate.setDate(testDate.getDate() - (i * getRandomInt(30, 90)))
+    const dateString = testDate.toISOString().split('T')[0]
+    if (dateString) {
+      dates.push(dateString)
+    }
+  }
+
+  // Generate lab results for each date
+  const labResults = []
+  const labMetrics = []
+
+  for (const test of labTests) {
+    // Add to metrics
+    labMetrics.push({
+      id: labMetrics.length + 1,
+      test_name: test.name,
+      range_min: test.min,
+      range_max: test.max,
+      units: test.units,
+      category: test.category,
+      description: `${test.name} lab test`
+    })
+
+    // Generate results for each date
+    for (const date of dates) {
+      // Generate realistic values with some variation
+      const baseValue = test.min + (test.max - test.min) * 0.7 // Aim for 70% of range
+      const variation = (test.max - test.min) * 0.3 // 30% variation
+      const value = baseValue + (Math.random() - 0.5) * variation
+
+      // Occasionally generate out-of-range values (10% chance)
+      const finalValue = Math.random() < 0.1
+        ? value + (Math.random() - 0.5) * (test.max - test.min) * 0.5
+        : Math.max(test.min * 0.8, Math.min(test.max * 1.2, value))
+
+      labResults.push({
+        id: labResults.length + 1,
+        test_name: test.name,
+        value: finalValue.toFixed(test.name.includes('Cholesterol') || test.name.includes('Glucose') ? 0 : 1),
+        collected_on: date,
+        numeric_value: parseFloat(finalValue.toFixed(2))
+      })
+    }
+  }
+
+  return {
+    labResults: labResults.sort((a, b) => new Date(b.collected_on).getTime() - new Date(a.collected_on).getTime()),
+    labMetrics,
+    availableDates: dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
   }
 }
