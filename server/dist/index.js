@@ -241,9 +241,18 @@ async function startServer() {
                     health: '/api/scale/health',
                     raw: '/api/scale/raw'
                 },
+                labs: {
+                    summary: '/api/labs/summary/:date',
+                    results: '/api/labs/results',
+                    latest: '/api/labs/latest',
+                    trends: '/api/labs/trends/:testName',
+                    metrics: '/api/labs/metrics',
+                    dates: '/api/labs/dates',
+                    health: '/api/labs/health'
+                },
                 health: '/health'
             },
-            documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details, Issue #11 for Scale API details'
+            documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details, Issue #11 for Scale API details, Issue #13 for Bloodwork Lab API details'
         });
     });
     // Start HTTP server

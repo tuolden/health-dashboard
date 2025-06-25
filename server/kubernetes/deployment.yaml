@@ -43,7 +43,7 @@ spec:
         - name: FRONTEND_URL
           value: "https://dashboard.home"
         - name: FORCE_REDEPLOY
-          value: "v-2025-06-25-scale-api"
+          value: "v-2025-06-25-bloodwork-api"
         resources:
           requests:
             memory: "256Mi"

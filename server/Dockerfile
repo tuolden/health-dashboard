@@ -12,11 +12,8 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci --only=production
 
-# Copy source code
+# Copy source code (including pre-built dist folder)
 COPY . .
-
-# Build TypeScript to JavaScript
-RUN npm run build
 
 # Stage 2: Production stage
 FROM node:18-alpine AS production
