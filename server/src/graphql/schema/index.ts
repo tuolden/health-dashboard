@@ -257,6 +257,52 @@ export const typeDefs = gql`
     timestamp: DateTime!
   }
 
+  # HUME Scale Types - Issue #11
+  type WeightSession {
+    date: String!
+    health_score: Float
+    weight_after: Float
+    body_fat_percentage_after: Float
+    body_fat_mass_after: Float
+    lean_mass_after: Float
+    skeletal_muscle_mass_after: Float
+    skeletal_mass_after: Float
+    body_water_after: Float
+    bmr_after: Float
+    metabolic_age_after: Int
+    resting_heart_rate_after: Int
+    body_cell_mass_after: Float
+    subcutaneous_fat_mass_after: Float
+    visceral_fat_index_after: Float
+  }
+
+  type WeightTrend {
+    metric: String!
+    current_value: Float
+    previous_value: Float
+    change_amount: Float
+    change_percentage: Float
+    trend_direction: String! # "increasing", "decreasing", "stable"
+    days_analyzed: Int!
+  }
+
+  type HealthSnapshot {
+    date: String!
+    weight: Float
+    body_fat_percentage: Float
+    skeletal_muscle_mass: Float
+    body_water: Float
+    bmr: Float
+    resting_heart_rate: Int
+    metabolic_age: Int
+    health_score: Float
+  }
+
+  type HealthScorePoint {
+    date: String!
+    health_score: Float!
+  }
+
   # Root Query Type
   type Query {
     # Widget Data Queries
@@ -279,7 +325,13 @@ export const typeDefs = gql`
     getWorkoutSessions(start: String!, end: String!): [WorkoutSession!]!
     getWeeklyZoneBreakdown(weekStart: String!): ZoneBreakdown!
     getTrainingLoadTrend(days: Int!): [IntensityScorePoint!]!
-    
+
+    # HUME Scale Data Queries - Issue #11
+    getWeightSessions(start: String!, end: String!): [WeightSession!]!
+    getWeightDelta(days: Int!): WeightTrend
+    getHealthScoreTrend(start: String!, end: String!): [HealthScorePoint!]!
+    getLatestHealthSnapshot: HealthSnapshot
+
     # System Queries
     health: String!
     widgetRegistry: [WidgetRegistryEntry!]!

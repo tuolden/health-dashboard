@@ -56,6 +56,7 @@ export type WidgetCategory =
   | 'analytics'     // Charts, trends, summaries
   | 'cpap'          // CPAP monitoring widgets
   | 'workout'       // Heart rate workout sessions
+  | 'scale'         // HUME scale body composition widgets
 
 // Props that every widget component receives
 export interface WidgetProps {

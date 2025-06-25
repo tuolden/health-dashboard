@@ -144,6 +144,32 @@ exports.WIDGET_REGISTRY = [
         datasetName: 'polar_metrics',
         isActive: true
     },
+    // HUME Scale Widgets - Issue #11
+    {
+        widgetType: 'scale-current-weight',
+        datasetName: 'scale_data_ingest',
+        isActive: true
+    },
+    {
+        widgetType: 'scale-weight-over-time',
+        datasetName: 'scale_data_ingest',
+        isActive: true
+    },
+    {
+        widgetType: 'scale-body-fat-percentage',
+        datasetName: 'scale_data_ingest',
+        isActive: true
+    },
+    {
+        widgetType: 'scale-health-score-over-time',
+        datasetName: 'scale_data_ingest',
+        isActive: true
+    },
+    {
+        widgetType: 'scale-daily-health-snapshot',
+        datasetName: 'scale_data_ingest',
+        isActive: true
+    },
     // Additional widgets that might share datasets
     {
         widgetType: 'progressTracker',

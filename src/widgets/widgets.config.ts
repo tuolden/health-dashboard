@@ -23,6 +23,43 @@ import { WorkoutHeartRateTimeWidget } from '../components/widgets/WorkoutHeartRa
 import { WorkoutZonesWidget } from '../components/widgets/WorkoutZonesWidget'
 import { WorkoutFatBurnRatioWidget } from '../components/widgets/WorkoutFatBurnRatioWidget'
 
+// Import HUME Scale widgets - Issue #11
+import {
+  // Weight & Fat Tracking (1-5)
+  CurrentWeightWidget,
+  WeightOverTimeWidget,
+  BodyFatPercentageWidget,
+  BodyFatMassWidget,
+  LeanMassWidget,
+  // Muscle & Skeletal Strength (6-8)
+  SkeletalMuscleMassTodayWidget,
+  SkeletalMuscleMassTrendWidget,
+  SkeletalMassWidget,
+  // Metabolic Health (9-12)
+  MetabolicAgeWidget,
+  BMROverTimeWidget,
+  RestingHeartRateOverTimeWidget,
+  RestingHeartRateTodayWidget,
+  // Composition & Hydration (13-15)
+  BodyWaterPercentageWidget,
+  SubcutaneousFatMassWidget,
+  VisceralFatIndexWidget,
+  // Cellular Health (16-17)
+  BodyCellMassTrendWidget,
+  BCMvsLeanMassWidget,
+  // Dynamic Trends (18-20)
+  WeightChange7DaysWidget,
+  BodyFatChange30DaysWidget,
+  LeanMassVsBodyFatWidget,
+  // Before & After Insights (21-22)
+  WeightBeforeAfterWidget,
+  BodyFatBeforeAfterWidget,
+  // Holistic Overview (23-25)
+  HealthScoreOverTimeWidget,
+  DailyHealthSnapshotWidget,
+  GoalProgressWidget
+} from '../components/widgets/scale'
+
 // Temporary placeholder components for widgets not yet created
 const CaloriesWidget: React.FC<any> = () => React.createElement('div', null, 'Calories Widget Coming Soon')
 const HeartRateWidget: React.FC<any> = () => React.createElement('div', null, 'Heart Rate Widget Coming Soon')
@@ -311,6 +348,464 @@ export const widgetRegistry: WidgetRegistryEntry[] = [
     version: '1.0.0',
     theme: {
       accentColor: '#ec4899',
+      animation: 'fade-in'
+    }
+  },
+  // HUME Scale Widgets - Issue #11 - Weight & Fat Tracking (1-5)
+  {
+    id: 'scale-current-weight',
+    title: 'Current Weight',
+    description: 'Latest weight measurement with trend analysis',
+    component: CurrentWeightWidget,
+    size: WIDGET_SIZES.SMALL,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 50,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#2563eb',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-weight-over-time',
+    title: 'Weight Over Time',
+    description: 'Weight trend progression with goal tracking',
+    component: WeightOverTimeWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 49,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#2563eb',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-body-fat-percentage',
+    title: 'Body Fat % Over Time',
+    description: 'Body fat percentage trend with health zones',
+    component: BodyFatPercentageWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 48,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-body-fat-mass',
+    title: 'Body Fat Mass Over Time',
+    description: 'Absolute body fat mass tracking in pounds',
+    component: BodyFatMassWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 47,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-lean-mass',
+    title: 'Lean Mass Over Time',
+    description: 'Lean body mass progression tracking',
+    component: LeanMassWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 46,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#10b981',
+      animation: 'fade-in'
+    }
+  },
+  // Muscle & Skeletal Strength (6-8)
+  {
+    id: 'scale-skeletal-muscle-today',
+    title: 'Skeletal Muscle Mass Today',
+    description: 'Current skeletal muscle mass with comparison',
+    component: SkeletalMuscleMassTodayWidget,
+    size: WIDGET_SIZES.SMALL,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 45,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#10b981',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-skeletal-muscle-trend',
+    title: 'Skeletal Muscle Mass Trend',
+    description: 'Skeletal muscle mass progression with fitness benchmarks',
+    component: SkeletalMuscleMassTrendWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 44,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#10b981',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-skeletal-mass',
+    title: 'Skeletal Mass Over Time',
+    description: 'Bone mass/density progression tracking',
+    component: SkeletalMassWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 43,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  // Metabolic Health (9-12)
+  {
+    id: 'scale-metabolic-age',
+    title: 'Metabolic Age vs Real Age',
+    description: 'Metabolic age comparison with health assessment',
+    component: MetabolicAgeWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 42,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-bmr-over-time',
+    title: 'BMR Over Time',
+    description: 'Basal metabolic rate progression tracking',
+    component: BMROverTimeWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 41,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#f59e0b',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-rhr-over-time',
+    title: 'Resting Heart Rate Over Time',
+    description: 'Resting heart rate trend with fitness zones',
+    component: RestingHeartRateOverTimeWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 40,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-rhr-today',
+    title: 'Resting Heart Rate Today',
+    description: 'Current resting heart rate with fitness assessment',
+    component: RestingHeartRateTodayWidget,
+    size: WIDGET_SIZES.SMALL,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 39,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  // Composition & Hydration (13-15)
+  {
+    id: 'scale-body-water-percentage',
+    title: 'Body Water % Over Time',
+    description: 'Body water percentage with hydration zones',
+    component: BodyWaterPercentageWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 38,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#06b6d4',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-subcutaneous-fat-mass',
+    title: 'Subcutaneous Fat Mass Over Time',
+    description: 'Under-skin fat mass progression tracking',
+    component: SubcutaneousFatMassWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 37,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#f59e0b',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-visceral-fat-index',
+    title: 'Visceral Fat Index Trend',
+    description: 'Organ fat index with health risk assessment',
+    component: VisceralFatIndexWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 36,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  // Cellular Health (16-17)
+  {
+    id: 'scale-body-cell-mass-trend',
+    title: 'Body Cell Mass Trend',
+    description: 'Active metabolic tissue progression',
+    component: BodyCellMassTrendWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 35,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-bcm-vs-lean-mass',
+    title: 'BCM vs Lean Mass Today',
+    description: 'Body cell mass vs lean mass ratio analysis',
+    component: BCMvsLeanMassWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 34,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  // Dynamic Trends (18-20)
+  {
+    id: 'scale-weight-change-7days',
+    title: 'Weight Change (Last 7 Days)',
+    description: '7-day weight change with trend analysis',
+    component: WeightChange7DaysWidget,
+    size: WIDGET_SIZES.SMALL,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 33,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#3b82f6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-body-fat-change-30days',
+    title: 'Body Fat Change (Last 30 Days)',
+    description: '30-day body fat mass change tracking',
+    component: BodyFatChange30DaysWidget,
+    size: WIDGET_SIZES.SMALL,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 32,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-lean-vs-body-fat',
+    title: 'Lean Mass vs Body Fat Mass',
+    description: 'Dual trend comparison of lean mass and body fat',
+    component: LeanMassVsBodyFatWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 31,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#10b981',
+      animation: 'fade-in'
+    }
+  },
+  // Before & After Insights (21-22)
+  {
+    id: 'scale-weight-before-after',
+    title: 'Weight Before vs After',
+    description: 'Per-session weight before/after comparison',
+    component: WeightBeforeAfterWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 30,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#2563eb',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-body-fat-before-after',
+    title: 'Body Fat % Before vs After',
+    description: 'Per-session body fat percentage comparison',
+    component: BodyFatBeforeAfterWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 29,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  // Holistic Overview (23-25)
+  {
+    id: 'scale-health-score-over-time',
+    title: 'Health Score Over Time',
+    description: 'Overall health score progression with performance zones',
+    component: HealthScoreOverTimeWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 28,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-daily-health-snapshot',
+    title: 'Daily Health Snapshot',
+    description: 'Comprehensive overview of today\'s health metrics',
+    component: DailyHealthSnapshotWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 27,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#8b5cf6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'scale-goal-progress',
+    title: 'Goal Progress to Target Weight',
+    description: 'Progress toward weight goal with timeline estimation',
+    component: GoalProgressWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'scale',
+    priority: 26,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#3b82f6',
       animation: 'fade-in'
     }
   }

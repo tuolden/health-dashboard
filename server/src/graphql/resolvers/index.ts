@@ -11,10 +11,12 @@ import { SUBSCRIPTION_EVENTS } from '../../utils/pubsub'
 import { generateStepsData, generateWaterIntakeData, generateWeightData, generateHeartRateData, generateNutritionData, generateSleepData, generateActivityData } from '../../utils/mockData'
 import { CpapDao } from '../../database/cpapDao'
 import { PolarDao } from '../../database/polarDao'
+import { ScaleDao } from '../../database/scaleDao'
 
 // Initialize DAOs
 const cpapDao = new CpapDao()
 const polarDao = new PolarDao()
+const scaleDao = new ScaleDao()
 
 // Custom DateTime scalar
 const DateTimeScalar = new GraphQLScalarType({
@@ -242,9 +244,65 @@ const Query = {
     }
   },
 
+  // HUME Scale Data Queries - Issue #11
+  getWeightSessions: async (_: any, args: { start: string, end: string }) => {
+    try {
+      console.log('⚖️ Fetching weight sessions:', args.start, 'to', args.end)
+      return await scaleDao.getWeightSessions({
+        startDate: args.start,
+        endDate: args.end
+      })
+    } catch (error) {
+      console.error('❌ Error fetching weight sessions:', error)
+      throw new Error('Failed to fetch weight sessions')
+    }
+  },
+
+  getWeightDelta: async (_: any, args: { days: number }) => {
+    try {
+      console.log('📊 Fetching weight delta for', args.days, 'days')
+      return await scaleDao.getWeightDelta(args.days)
+    } catch (error) {
+      console.error('❌ Error fetching weight delta:', error)
+      throw new Error('Failed to fetch weight delta')
+    }
+  },
+
+  getHealthScoreTrend: async (_: any, args: { start: string, end: string }) => {
+    try {
+      console.log('📈 Fetching health score trend:', args.start, 'to', args.end)
+      const sessions = await scaleDao.getWeightSessions({
+        startDate: args.start,
+        endDate: args.end
+      })
+
+      // Convert to health score points
+      return sessions
+        .filter(session => session.health_score !== null && session.health_score !== undefined)
+        .map(session => ({
+          date: session.date,
+          health_score: session.health_score
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date))
+    } catch (error) {
+      console.error('❌ Error fetching health score trend:', error)
+      throw new Error('Failed to fetch health score trend')
+    }
+  },
+
+  getLatestHealthSnapshot: async () => {
+    try {
+      console.log('📸 Fetching latest health snapshot')
+      return await scaleDao.getLatestHealthSnapshot()
+    } catch (error) {
+      console.error('❌ Error fetching latest health snapshot:', error)
+      throw new Error('Failed to fetch latest health snapshot')
+    }
+  },
+
   // System Queries
   health: () => {
-    return 'GraphQL Health Dashboard API with CPAP support is running! 🚀🫁'
+    return 'GraphQL Health Dashboard API with CPAP, Workout, and Scale support is running! 🚀🫁⚖️'
   },
 
   widgetRegistry: () => {

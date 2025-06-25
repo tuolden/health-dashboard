@@ -210,6 +210,21 @@ export declare const resolvers: {
             date: string;
             trimp_score: number;
         }[]>;
+        getWeightSessions: (_: any, args: {
+            start: string;
+            end: string;
+        }) => Promise<import("../../types/scale").WeightSession[]>;
+        getWeightDelta: (_: any, args: {
+            days: number;
+        }) => Promise<import("../../types/scale").WeightTrend | null>;
+        getHealthScoreTrend: (_: any, args: {
+            start: string;
+            end: string;
+        }) => Promise<{
+            date: string;
+            health_score: number | undefined;
+        }[]>;
+        getLatestHealthSnapshot: () => Promise<import("../../types/scale").HealthSnapshot | null>;
         health: () => string;
         widgetRegistry: () => import("../widgetRegistry").WidgetRegistryEntry[];
     };

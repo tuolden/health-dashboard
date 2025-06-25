@@ -26,6 +26,7 @@ const pubsub_1 = require("./utils/pubsub");
 const cpapDatabase_1 = require("./database/cpapDatabase");
 const cpapRoutes_1 = __importDefault(require("./routes/cpapRoutes"));
 const workoutRoutes_1 = __importDefault(require("./routes/workoutRoutes"));
+const scaleRoutes_1 = __importDefault(require("./routes/scaleRoutes"));
 const PORT = process.env['PORT'] || 4000;
 const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000';
 async function startServer() {
@@ -168,6 +169,8 @@ async function startServer() {
     app.use('/api/cpap', cpapRoutes_1.default);
     // Workout REST API routes - Issue #9
     app.use('/api/workouts', workoutRoutes_1.default);
+    // HUME Scale REST API routes - Issue #11
+    app.use('/api/scale', scaleRoutes_1.default);
     // Test endpoint for triggering widget refresh - Issue #8
     app.post('/api/test/refresh-widget', (req, res) => {
         const { widgetType = 'cpap', data } = req.body;
@@ -222,9 +225,17 @@ async function startServer() {
                     health: '/api/workouts/health',
                     raw: '/api/workouts/raw'
                 },
+                scale: {
+                    weightSessions: '/api/scale/weight-sessions',
+                    weightSessionsSummary: '/api/scale/weight-sessions/summary',
+                    healthSnapshot: '/api/scale/health-snapshot',
+                    weightDelta: '/api/scale/weight-delta',
+                    health: '/api/scale/health',
+                    raw: '/api/scale/raw'
+                },
                 health: '/health'
             },
-            documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details'
+            documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details, Issue #11 for Scale API details'
         });
     });
     // Start HTTP server
