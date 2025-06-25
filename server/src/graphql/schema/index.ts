@@ -303,6 +303,79 @@ export const typeDefs = gql`
     health_score: Float!
   }
 
+  # Bloodwork Lab Types - Issue #13
+  type LabResult {
+    id: Int
+    test_name: String!
+    value: String!
+    collected_on: String!
+    numeric_value: Float
+    is_numeric: Boolean
+  }
+
+  type LabMetric {
+    id: Int
+    test_name: String!
+    range_min: Float
+    range_max: Float
+    units: String
+    category: String
+    description: String
+  }
+
+  type EnhancedLabResult {
+    id: Int
+    test_name: String!
+    value: String!
+    collected_on: String!
+    numeric_value: Float
+    is_numeric: Boolean
+    metric: LabMetric
+    is_in_range: Boolean
+    deviation_score: Float
+    risk_level: String
+    trend_direction: String
+    change_from_previous: Float
+    change_percentage: Float
+  }
+
+  type LabPanel {
+    panel_name: String!
+    tests: [EnhancedLabResult!]!
+    overall_status: String!
+    abnormal_count: Int!
+    total_count: Int!
+  }
+
+  type LabSummary {
+    collected_on: String!
+    total_tests: Int!
+    in_range_count: Int!
+    out_of_range_count: Int!
+    critical_count: Int!
+    panels: [LabPanel!]!
+    top_concerns: [EnhancedLabResult!]!
+    overall_health_score: Int
+  }
+
+  type LabTrendPoint {
+    date: String!
+    value: Float!
+    is_in_range: Boolean!
+  }
+
+  type LabTrend {
+    test_name: String!
+    values: [LabTrendPoint!]!
+    trend_direction: String!
+    slope: Float
+    correlation: Float
+    latest_value: Float!
+    previous_value: Float
+    change_amount: Float
+    change_percentage: Float
+  }
+
   # Root Query Type
   type Query {
     # Widget Data Queries
@@ -331,6 +404,15 @@ export const typeDefs = gql`
     getWeightDelta(days: Int!): WeightTrend
     getHealthScoreTrend(start: String!, end: String!): [HealthScorePoint!]!
     getLatestHealthSnapshot: HealthSnapshot
+
+    # Bloodwork Lab Data Queries - Issue #13
+    getLabResults(startDate: String, endDate: String, testNames: [String!], limit: Int, offset: Int, onlyAbnormal: Boolean): [LabResult!]!
+    getEnhancedLabResults(startDate: String, endDate: String, testNames: [String!], limit: Int, offset: Int, onlyAbnormal: Boolean): [EnhancedLabResult!]!
+    getLabSummary(collectedOn: String!): LabSummary
+    getLabTrend(testName: String!, days: Int): LabTrend
+    getLatestLabResults: [EnhancedLabResult!]!
+    getLabMetrics(testNames: [String!]): [LabMetric!]!
+    getAvailableLabDates: [String!]!
 
     # System Queries
     health: String!

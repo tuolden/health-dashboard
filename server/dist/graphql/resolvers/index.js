@@ -14,10 +14,12 @@ const mockData_1 = require("../../utils/mockData");
 const cpapDao_1 = require("../../database/cpapDao");
 const polarDao_1 = require("../../database/polarDao");
 const scaleDao_1 = require("../../database/scaleDao");
+const bloodworkDao_1 = require("../../database/bloodworkDao");
 // Initialize DAOs
 const cpapDao = new cpapDao_1.CpapDao();
 const polarDao = new polarDao_1.PolarDao();
 const scaleDao = new scaleDao_1.ScaleDao();
+const bloodworkDao = new bloodworkDao_1.BloodworkDao();
 // Custom DateTime scalar
 const DateTimeScalar = new graphql_1.GraphQLScalarType({
     name: 'DateTime',
@@ -290,9 +292,80 @@ const Query = {
             throw new Error('Failed to fetch latest health snapshot');
         }
     },
+    // Bloodwork Lab Data Queries - Issue #13
+    getLabResults: async (_, args) => {
+        try {
+            console.log('🧬 Fetching lab results:', args);
+            return await bloodworkDao.getLabResults(args);
+        }
+        catch (error) {
+            console.error('❌ Error fetching lab results:', error);
+            throw new Error('Failed to fetch lab results');
+        }
+    },
+    getEnhancedLabResults: async (_, args) => {
+        try {
+            console.log('🧬 Fetching enhanced lab results:', args);
+            return await bloodworkDao.getEnhancedLabResults(args);
+        }
+        catch (error) {
+            console.error('❌ Error fetching enhanced lab results:', error);
+            throw new Error('Failed to fetch enhanced lab results');
+        }
+    },
+    getLabSummary: async (_, args) => {
+        try {
+            console.log('🧬 Fetching lab summary for:', args.collectedOn);
+            return await bloodworkDao.getLabSummary(args.collectedOn);
+        }
+        catch (error) {
+            console.error('❌ Error fetching lab summary:', error);
+            throw new Error('Failed to fetch lab summary');
+        }
+    },
+    getLabTrend: async (_, args) => {
+        try {
+            console.log('🧬 Fetching lab trend for:', args.testName, 'days:', args.days);
+            return await bloodworkDao.getLabTrend(args.testName, args.days);
+        }
+        catch (error) {
+            console.error('❌ Error fetching lab trend:', error);
+            throw new Error('Failed to fetch lab trend');
+        }
+    },
+    getLatestLabResults: async () => {
+        try {
+            console.log('🧬 Fetching latest lab results');
+            return await bloodworkDao.getLatestLabResults();
+        }
+        catch (error) {
+            console.error('❌ Error fetching latest lab results:', error);
+            throw new Error('Failed to fetch latest lab results');
+        }
+    },
+    getLabMetrics: async (_, args) => {
+        try {
+            console.log('🧬 Fetching lab metrics:', args.testNames);
+            return await bloodworkDao.getLabMetrics(args.testNames);
+        }
+        catch (error) {
+            console.error('❌ Error fetching lab metrics:', error);
+            throw new Error('Failed to fetch lab metrics');
+        }
+    },
+    getAvailableLabDates: async () => {
+        try {
+            console.log('🧬 Fetching available lab dates');
+            return await bloodworkDao.getAvailableDates();
+        }
+        catch (error) {
+            console.error('❌ Error fetching available lab dates:', error);
+            throw new Error('Failed to fetch available lab dates');
+        }
+    },
     // System Queries
     health: () => {
-        return 'GraphQL Health Dashboard API with CPAP, Workout, and Scale support is running! 🚀🫁⚖️';
+        return 'GraphQL Health Dashboard API with CPAP, Workout, Scale, and Bloodwork support is running! 🚀🫁⚖️🧬';
     },
     widgetRegistry: () => {
         console.log('📋 Fetching widget registry...');

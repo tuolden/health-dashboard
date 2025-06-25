@@ -225,6 +225,20 @@ export declare const resolvers: {
             health_score: number | undefined;
         }[]>;
         getLatestHealthSnapshot: () => Promise<import("../../types/scale").HealthSnapshot | null>;
+        getLabResults: (_: any, args: any) => Promise<import("../../types/bloodwork").LabResult[]>;
+        getEnhancedLabResults: (_: any, args: any) => Promise<import("../../types/bloodwork").EnhancedLabResult[]>;
+        getLabSummary: (_: any, args: {
+            collectedOn: string;
+        }) => Promise<import("../../types/bloodwork").LabSummary | null>;
+        getLabTrend: (_: any, args: {
+            testName: string;
+            days?: number;
+        }) => Promise<import("../../types/bloodwork").LabTrend | null>;
+        getLatestLabResults: () => Promise<import("../../types/bloodwork").EnhancedLabResult[]>;
+        getLabMetrics: (_: any, args: {
+            testNames?: string[];
+        }) => Promise<import("../../types/bloodwork").LabMetric[]>;
+        getAvailableLabDates: () => Promise<string[]>;
         health: () => string;
         widgetRegistry: () => import("../widgetRegistry").WidgetRegistryEntry[];
     };

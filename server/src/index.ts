@@ -21,9 +21,11 @@ import { resolvers } from './graphql/resolvers'
 import { setupWebhooks } from './webhooks/handler'
 import { pubsub } from './utils/pubsub'
 import { testCpapConnection } from './database/cpapDatabase'
+import { testBloodworkConnection, initializeBloodworkTables } from './database/bloodworkDatabase'
 import cpapRoutes from './routes/cpapRoutes'
 import workoutRoutes from './routes/workoutRoutes'
 import scaleRoutes from './routes/scaleRoutes'
+import bloodworkRoutes from './routes/bloodworkRoutes'
 
 const PORT = process.env['PORT'] || 4000
 const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000'
@@ -31,9 +33,15 @@ const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000'
 async function startServer() {
   console.log('🚀 Starting Health Dashboard GraphQL Server...')
 
-  // Test CPAP database connection on startup
+  // Test database connections on startup
   console.log('🔌 Testing CPAP database connection...')
   await testCpapConnection()
+
+  console.log('🧬 Testing Bloodwork database connection...')
+  await testBloodworkConnection()
+
+  console.log('🧬 Initializing Bloodwork database tables...')
+  await initializeBloodworkTables()
 
   // Create Express app
   const app = express()
@@ -201,6 +209,9 @@ async function startServer() {
 
   // HUME Scale REST API routes - Issue #11
   app.use('/api/scale', scaleRoutes)
+
+  // Bloodwork Lab REST API routes - Issue #13
+  app.use('/api/labs', bloodworkRoutes)
 
   // Test endpoint for triggering widget refresh - Issue #8
   app.post('/api/test/refresh-widget', (req, res) => {

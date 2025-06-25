@@ -24,16 +24,22 @@ const resolvers_1 = require("./graphql/resolvers");
 const handler_1 = require("./webhooks/handler");
 const pubsub_1 = require("./utils/pubsub");
 const cpapDatabase_1 = require("./database/cpapDatabase");
+const bloodworkDatabase_1 = require("./database/bloodworkDatabase");
 const cpapRoutes_1 = __importDefault(require("./routes/cpapRoutes"));
 const workoutRoutes_1 = __importDefault(require("./routes/workoutRoutes"));
 const scaleRoutes_1 = __importDefault(require("./routes/scaleRoutes"));
+const bloodworkRoutes_1 = __importDefault(require("./routes/bloodworkRoutes"));
 const PORT = process.env['PORT'] || 4000;
 const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000';
 async function startServer() {
     console.log('🚀 Starting Health Dashboard GraphQL Server...');
-    // Test CPAP database connection on startup
+    // Test database connections on startup
     console.log('🔌 Testing CPAP database connection...');
     await (0, cpapDatabase_1.testCpapConnection)();
+    console.log('🧬 Testing Bloodwork database connection...');
+    await (0, bloodworkDatabase_1.testBloodworkConnection)();
+    console.log('🧬 Initializing Bloodwork database tables...');
+    await (0, bloodworkDatabase_1.initializeBloodworkTables)();
     // Create Express app
     const app = (0, express_1.default)();
     // Security middleware
@@ -171,6 +177,8 @@ async function startServer() {
     app.use('/api/workouts', workoutRoutes_1.default);
     // HUME Scale REST API routes - Issue #11
     app.use('/api/scale', scaleRoutes_1.default);
+    // Bloodwork Lab REST API routes - Issue #13
+    app.use('/api/labs', bloodworkRoutes_1.default);
     // Test endpoint for triggering widget refresh - Issue #8
     app.post('/api/test/refresh-widget', (req, res) => {
         const { widgetType = 'cpap', data } = req.body;
