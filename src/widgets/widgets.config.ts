@@ -60,6 +60,49 @@ import {
   GoalProgressWidget
 } from '../components/widgets/scale'
 
+// Import Bloodwork widgets - Issue #13
+import {
+  // Essential Medical Widgets (1-15)
+  CBCSummaryWidget,
+  WBCBreakdownWidget,
+  HemoglobinWidget,
+  LipidPanelWidget,
+  GlucoseWidget,
+  ElectrolytesWidget,
+  KidneyPanelWidget,
+  TestosteroneWidget,
+  ThyroidPanelWidget,
+  LiverEnzymesWidget,
+  TSHWidget,
+  CreatinineWidget,
+  HDLCholesterolWidget,
+  LDLCholesterolWidget,
+  PlateletCountWidget,
+  // Risk Assessment Widgets (16-22)
+  LabAlertsWidget,
+  AnemiaRiskWidget,
+  CardiovascularRiskWidget,
+  DiabetesWatchWidget,
+  LiverStressIndexWidget,
+  OutOfRangeTrackerWidget,
+  KidneyFunctionRiskWidget,
+  // Human-Centered Widgets (23-26)
+  WhatsChangedWidget,
+  Top3ConcernsWidget,
+  ProgressTrackingWidget,
+  HealthScoreSummaryWidget,
+  // Advanced Analysis Widgets (27-35)
+  LabTimelineWidget,
+  CorrelationAnalysisWidget,
+  PredictiveTrendsWidget,
+  PopulationComparisonWidget,
+  SupplementEffectsWidget,
+  LabReportSummaryWidget,
+  LabComparisonWidget,
+  LabInsightsSummaryWidget,
+  BloodworkSystemSummaryWidget
+} from '../components/widgets/bloodwork'
+
 // Temporary placeholder components for widgets not yet created
 const CaloriesWidget: React.FC<any> = () => React.createElement('div', null, 'Calories Widget Coming Soon')
 const HeartRateWidget: React.FC<any> = () => React.createElement('div', null, 'Heart Rate Widget Coming Soon')
@@ -808,6 +851,170 @@ export const widgetRegistry: WidgetRegistryEntry[] = [
       accentColor: '#3b82f6',
       animation: 'fade-in'
     }
+  },
+
+  // Bloodwork Lab Widgets - Issue #13 - Essential Medical Widgets (1-15)
+  {
+    id: 'lab-cbc-summary',
+    title: 'CBC Summary',
+    description: 'Complete Blood Count overview with key metrics',
+    component: CBCSummaryWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 60,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-wbc-breakdown',
+    title: 'WBC Breakdown',
+    description: 'White blood cell differential with pie chart visualization',
+    component: WBCBreakdownWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 59,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-hemoglobin',
+    title: 'Hemoglobin',
+    description: 'Anemia risk assessment and hemoglobin trends',
+    component: HemoglobinWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 58,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-lipid-panel',
+    title: 'Lipid Panel',
+    description: 'Cardiovascular risk factors and cholesterol analysis',
+    component: LipidPanelWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 57,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-glucose',
+    title: 'Glucose',
+    description: 'Diabetes monitoring and glucose trend analysis',
+    component: GlucoseWidget,
+    size: WIDGET_SIZES.MEDIUM,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 56,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-thyroid-panel',
+    title: 'Thyroid Panel',
+    description: 'TSH, T4, T3 function analysis',
+    component: ThyroidPanelWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 55,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#dc2626',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-alerts',
+    title: 'Lab Alerts Dashboard',
+    description: 'Critical alerts and out-of-range tracking',
+    component: LabAlertsWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 70,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#ef4444',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-whats-changed',
+    title: "What's Changed",
+    description: 'Intelligent comparison between lab dates with explanations',
+    component: WhatsChangedWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 65,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#3b82f6',
+      animation: 'fade-in'
+    }
+  },
+  {
+    id: 'lab-health-score',
+    title: 'Health Score Summary',
+    description: 'Overall health scoring with category breakdown',
+    component: HealthScoreSummaryWidget,
+    size: WIDGET_SIZES.LARGE,
+    refreshStrategy: 'interval',
+    refreshInterval: 1800000, // 30 minutes
+    mockDataGenerator: () => ({}), // Real data from API
+    category: 'bloodwork',
+    priority: 68,
+    isEnabled: true,
+    version: '1.0.0',
+    theme: {
+      accentColor: '#10b981',
+      animation: 'fade-in'
+    }
   }
 ]
 
@@ -864,5 +1071,13 @@ export const defaultDashboardLayout = {
     { id: 'cpap-spo2-pulse', column: 1, row: 15, width: 2, height: 2 },
     { id: 'cpap-leak-rate', column: 1, row: 17, width: 2, height: 1 },
     { id: 'cpap-sleep-sessions', column: 1, row: 18, width: 2, height: 1 },
+
+    // Bloodwork Lab Widgets - Issue #13
+    { id: 'lab-alerts', column: 1, row: 19, width: 2, height: 2 },
+    { id: 'lab-health-score', column: 1, row: 21, width: 2, height: 2 },
+    { id: 'lab-whats-changed', column: 1, row: 23, width: 2, height: 2 },
+    { id: 'lab-cbc-summary', column: 1, row: 25, width: 2, height: 2 },
+    { id: 'lab-lipid-panel', column: 1, row: 27, width: 2, height: 2 },
+    { id: 'lab-thyroid-panel', column: 1, row: 29, width: 2, height: 2 },
   ]
 }
