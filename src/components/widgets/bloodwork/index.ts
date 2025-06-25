@@ -37,6 +37,12 @@ export { default as LiverStressIndexWidget } from './LiverStressIndexWidget'
 export { default as OutOfRangeTrackerWidget } from './OutOfRangeTrackerWidget'
 export { default as KidneyFunctionRiskWidget } from './KidneyFunctionRiskWidget'
 
+// Human-Centered Widgets (23-26)
+export { default as WhatsChangedWidget } from './WhatsChangedWidget'
+export { default as Top3ConcernsWidget } from './Top3ConcernsWidget'
+export { default as ProgressTrackingWidget } from './ProgressTrackingWidget'
+export { default as HealthScoreSummaryWidget } from './HealthScoreSummaryWidget'
+
 // Types
 export * from './types'
 
@@ -68,5 +74,9 @@ export {
   DiabetesWatchWidget,
   LiverStressIndexWidget,
   OutOfRangeTrackerWidget,
-  KidneyFunctionRiskWidget
+  KidneyFunctionRiskWidget,
+  WhatsChangedWidget,
+  Top3ConcernsWidget,
+  ProgressTrackingWidget,
+  HealthScoreSummaryWidget
 }
