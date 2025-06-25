@@ -276,7 +276,7 @@ export const PredictiveTrendsWidget: React.FC<PredictiveTrendsWidgetProps> = ({
           <p className="font-medium">{new Date(label).toLocaleDateString()}</p>
           <p style={{ color: data.isPrediction ? '#EF4444' : '#3B82F6' }}>
             {data.isPrediction ? 'Predicted: ' : 'Actual: '}
-            {formatLabValue(payload[0].value, prediction?.units, 1)}
+            {formatLabValue(payload[0]?.value || 0, prediction?.units, 1)}
           </p>
         </div>
       )

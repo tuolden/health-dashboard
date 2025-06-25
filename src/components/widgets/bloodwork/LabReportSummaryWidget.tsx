@@ -119,7 +119,7 @@ export const LabReportSummaryWidget: React.FC<LabReportSummaryWidgetProps> = ({
     let overallRisk: 'low' | 'moderate' | 'high' | 'critical'
     if (criticalResults.length > 0) overallRisk = 'critical'
     else if (highRiskResults.length > 2) overallRisk = 'high'
-    else if (abnormalResults.length > summary.total_count * 0.3) overallRisk = 'moderate'
+    else if (abnormalResults.length > summary.total_tests * 0.3) overallRisk = 'moderate'
     else overallRisk = 'low'
 
     // Generate executive summary
@@ -154,7 +154,7 @@ export const LabReportSummaryWidget: React.FC<LabReportSummaryWidgetProps> = ({
       nextSteps,
       reportDate,
       patientInfo: {
-        totalTests: summary.total_count,
+        totalTests: summary.total_tests,
         normalResults: summary.in_range_count,
         abnormalResults: summary.out_of_range_count,
         criticalResults: summary.critical_count,
@@ -165,16 +165,16 @@ export const LabReportSummaryWidget: React.FC<LabReportSummaryWidgetProps> = ({
 
   const generateExecutiveSummary = (summary: LabSummary, overallRisk: string, reportDate: string): string => {
     const date = new Date(reportDate).toLocaleDateString()
-    const normalPercent = Math.round((summary.in_range_count / summary.total_count) * 100)
+    const normalPercent = Math.round((summary.in_range_count / summary.total_tests) * 100)
     
     if (overallRisk === 'critical') {
-      return `Lab results from ${date} show ${summary.critical_count} critical value(s) requiring immediate medical attention. Of ${summary.total_count} tests performed, ${normalPercent}% are within normal ranges. Urgent follow-up recommended.`
+      return `Lab results from ${date} show ${summary.critical_count} critical value(s) requiring immediate medical attention. Of ${summary.total_tests} tests performed, ${normalPercent}% are within normal ranges. Urgent follow-up recommended.`
     } else if (overallRisk === 'high') {
-      return `Lab results from ${date} indicate elevated health risks with ${summary.out_of_range_count} abnormal values. Of ${summary.total_count} tests performed, ${normalPercent}% are within normal ranges. Medical consultation recommended within 1-2 weeks.`
+      return `Lab results from ${date} indicate elevated health risks with ${summary.out_of_range_count} abnormal values. Of ${summary.total_tests} tests performed, ${normalPercent}% are within normal ranges. Medical consultation recommended within 1-2 weeks.`
     } else if (overallRisk === 'moderate') {
-      return `Lab results from ${date} show some areas for improvement with ${summary.out_of_range_count} values outside normal ranges. Of ${summary.total_count} tests performed, ${normalPercent}% are normal. Follow-up with healthcare provider recommended.`
+      return `Lab results from ${date} show some areas for improvement with ${summary.out_of_range_count} values outside normal ranges. Of ${summary.total_tests} tests performed, ${normalPercent}% are normal. Follow-up with healthcare provider recommended.`
     } else {
-      return `Lab results from ${date} are largely reassuring with ${normalPercent}% of ${summary.total_count} tests within normal ranges. Continue current health practices with routine monitoring.`
+      return `Lab results from ${date} are largely reassuring with ${normalPercent}% of ${summary.total_tests} tests within normal ranges. Continue current health practices with routine monitoring.`
     }
   }
 

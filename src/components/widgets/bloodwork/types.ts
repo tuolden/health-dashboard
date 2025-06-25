@@ -185,7 +185,7 @@ export function formatLabValue(value: string | number, units?: string, precision
     value = numValue
   }
   
-  const formatted = typeof value === 'number' ? value.toFixed(precision) : value.toString()
+  const formatted = typeof value === 'number' ? value.toFixed(precision) : String(value)
   return units ? `${formatted} ${units}` : formatted
 }
 

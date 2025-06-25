@@ -102,10 +102,11 @@ export const OutOfRangeTrackerWidget: React.FC<OutOfRangeTrackerWidgetProps> = (
     // Sort data
     filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'risk':
+        case 'risk': {
           const riskOrder = { critical: 3, high: 2, elevated: 1, normal: 0, low: 0 }
-          return (riskOrder[b.risk_level as keyof typeof riskOrder] || 0) - 
+          return (riskOrder[b.risk_level as keyof typeof riskOrder] || 0) -
                  (riskOrder[a.risk_level as keyof typeof riskOrder] || 0)
+        }
         case 'deviation':
           return (b.deviation_score || 0) - (a.deviation_score || 0)
         case 'name':

@@ -129,7 +129,7 @@ export const HealthScoreSummaryWidget: React.FC<HealthScoreSummaryWidgetProps> =
     const { strengths, improvements } = generateInsights(categories, panels)
 
     // Generate summary
-    const summary = generateSummary(overall, grade, summary.critical_count, summary.out_of_range_count)
+    const summaryText = generateSummary(overall, grade, summary.critical_count, summary.out_of_range_count)
 
     return {
       overall,
@@ -137,7 +137,7 @@ export const HealthScoreSummaryWidget: React.FC<HealthScoreSummaryWidgetProps> =
       categories,
       strengths,
       improvements,
-      summary
+      summary: summaryText
     }
   }
 

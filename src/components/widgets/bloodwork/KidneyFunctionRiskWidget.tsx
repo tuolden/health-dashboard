@@ -360,7 +360,7 @@ export const KidneyFunctionRiskWidget: React.FC<KidneyFunctionRiskWidgetProps> =
           {/* CKD Stages Reference */}
           <div className="pt-4 border-t border-gray-100">
             <div className="text-xs text-gray-500">
-              <strong>CKD Stages:</strong> Stage 1 (≥90), Stage 2 (60-89), Stage 3a (45-59), Stage 3b (30-44), Stage 4 (15-29), Stage 5 (<15) eGFR mL/min/1.73m²
+              <strong>CKD Stages:</strong> Stage 1 (≥90), Stage 2 (60-89), Stage 3a (45-59), Stage 3b (30-44), Stage 4 (15-29), Stage 5 (&lt;15) eGFR mL/min/1.73m²
             </div>
           </div>
         </div>

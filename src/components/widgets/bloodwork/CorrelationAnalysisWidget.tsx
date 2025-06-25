@@ -301,8 +301,8 @@ export const CorrelationAnalysisWidget: React.FC<CorrelationAnalysisWidgetProps>
                       height={60}
                     />
                     <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip 
-                      formatter={(value, name) => [value.toFixed(2), 'Correlation']}
+                    <Tooltip
+                      formatter={(value) => [typeof value === 'number' ? value.toFixed(2) : value, 'Correlation']}
                       labelFormatter={(label) => `${label}`}
                     />
                     <Bar 
