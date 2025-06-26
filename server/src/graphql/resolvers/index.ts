@@ -7,7 +7,7 @@
 
 import { GraphQLScalarType, Kind } from 'graphql'
 import { widgetRegistry } from '../widgetRegistry'
-import { SUBSCRIPTION_EVENTS } from '../../utils/pubsub'
+// Note: SUBSCRIPTION_EVENTS removed - using simple auto-refresh instead
 import { generateStepsData, generateWaterIntakeData, generateWeightData, generateHeartRateData, generateNutritionData, generateSleepData, generateActivityData } from '../../utils/mockData'
 import { CpapDao } from '../../database/cpapDao'
 import { PolarDao } from '../../database/polarDao'
@@ -386,7 +386,7 @@ const Query = {
 
 // Mutation Resolvers
 const Mutation = {
-  refreshWidget: async (_: any, args: any, context: any) => {
+  refreshWidget: async (_: any, args: any, _context: any) => {
     try {
       console.log(`🔄 Refreshing widget: ${args.widgetType}`)
       
@@ -399,14 +399,7 @@ const Mutation = {
       // Update timestamp in registry
       widgetRegistry.updateDatasetTimestamp(datasetName)
 
-      // Publish update event
-      await context.pubsub.publish(SUBSCRIPTION_EVENTS.WIDGET_UPDATED, {
-        widgetUpdated: {
-          widgetType: args.widgetType,
-          data: JSON.stringify({ refreshed: true, timestamp: new Date() }),
-          timestamp: new Date().toISOString()
-        }
-      })
+      // Note: Real-time updates removed - using simple auto-refresh instead
 
       console.log(`✅ Widget ${args.widgetType} refreshed successfully`)
       return true
@@ -417,18 +410,11 @@ const Mutation = {
   },
 
   // CPAP Data Mutations - Issue #7
-  refreshCPAPData: async (_: any, _args: any, context: any) => {
+  refreshCPAPData: async (_: any, _args: any, _context: any) => {
     try {
       console.log('🔄 Refreshing CPAP data...')
 
-      // Publish CPAP data update event
-      await context.pubsub.publish(SUBSCRIPTION_EVENTS.WIDGET_UPDATED, {
-        widgetUpdated: {
-          widgetType: 'cpap-data',
-          data: JSON.stringify({ refreshed: true, timestamp: new Date() }),
-          timestamp: new Date().toISOString()
-        }
-      })
+      // Note: Real-time updates removed - using simple auto-refresh instead
 
       console.log('✅ CPAP data refreshed successfully')
       return true
@@ -439,46 +425,11 @@ const Mutation = {
   }
 }
 
-// Subscription Resolvers
-const Subscription = {
-  widgetUpdated: {
-    subscribe: (_: any, args: any, context: any) => {
-      console.log(`🔔 Client subscribed to widget updates${args.widgetType ? ` for ${args.widgetType}` : ' (all widgets)'}`)
-      if (args.widgetType) {
-        // Filter by specific widget type
-        return context.pubsub.asyncIterator([SUBSCRIPTION_EVENTS.WIDGET_UPDATED])
-      }
-      return context.pubsub.asyncIterator([SUBSCRIPTION_EVENTS.WIDGET_UPDATED])
-    }
-  },
-
-  datasetRefreshed: {
-    subscribe: (_: any, args: any, context: any) => {
-      console.log(`🔔 Client subscribed to dataset updates${args.datasetName ? ` for ${args.datasetName}` : ' (all datasets)'}`)
-      return context.pubsub.asyncIterator([SUBSCRIPTION_EVENTS.DATASET_REFRESHED])
-    }
-  },
-
-  webhookReceived: {
-    subscribe: (_: any, args: any, context: any) => {
-      console.log(`🔔 Client subscribed to webhook events${args.source ? ` for ${args.source}` : ' (all sources)'}`)
-      return context.pubsub.asyncIterator([SUBSCRIPTION_EVENTS.WEBHOOK_RECEIVED])
-    }
-  },
-
-  // CPAP Data Subscriptions - Issue #7
-  cpapDataUpdated: {
-    subscribe: (_: any, args: any, context: any) => {
-      console.log(`🔔 Client subscribed to CPAP data updates${args.metricType ? ` for ${args.metricType}` : ' (all metrics)'}`)
-      return context.pubsub.asyncIterator([SUBSCRIPTION_EVENTS.WIDGET_UPDATED])
-    }
-  }
-}
+// Note: Subscription resolvers removed - using simple auto-refresh instead
 
 // Export all resolvers
 export const resolvers = {
   DateTime: DateTimeScalar,
   Query,
-  Mutation,
-  Subscription
+  Mutation
 }

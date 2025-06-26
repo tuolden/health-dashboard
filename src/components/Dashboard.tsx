@@ -3,6 +3,7 @@ import { WidgetDataState } from '../types/widget'
 import { getEnabledWidgets, defaultDashboardLayout } from '../widgets/widgets.config'
 import { GridOverlay } from '../DesignSystem'
 import StickyHeader from './StickyHeader'
+import { useAutoRefresh } from '../hooks/useAutoRefresh'
 
 /**
  * Dashboard Component - Main container for all widgets
@@ -19,6 +20,16 @@ const Dashboard: React.FC = () => {
   const enabledWidgets = getEnabledWidgets()
   console.log('📊 [Dashboard] Enabled widgets:', enabledWidgets.length)
   console.log('📊 [Dashboard] Widget list:', enabledWidgets.map(w => ({ id: w.id, title: w.title, enabled: w.isEnabled })))
+
+  // Auto-refresh the entire page every hour
+  const { getFormattedTimeUntilNext } = useAutoRefresh({
+    intervalMinutes: 60,
+    enabled: true,
+    onRefresh: () => {
+      console.log('🔄 Auto-refreshing dashboard...')
+      window.location.reload()
+    }
+  })
   
   // Initialize widget states
   useEffect(() => {

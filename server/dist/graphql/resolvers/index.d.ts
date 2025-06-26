@@ -243,22 +243,8 @@ export declare const resolvers: {
         widgetRegistry: () => import("../widgetRegistry").WidgetRegistryEntry[];
     };
     Mutation: {
-        refreshWidget: (_: any, args: any, context: any) => Promise<boolean>;
-        refreshCPAPData: (_: any, _args: any, context: any) => Promise<boolean>;
-    };
-    Subscription: {
-        widgetUpdated: {
-            subscribe: (_: any, args: any, context: any) => any;
-        };
-        datasetRefreshed: {
-            subscribe: (_: any, args: any, context: any) => any;
-        };
-        webhookReceived: {
-            subscribe: (_: any, args: any, context: any) => any;
-        };
-        cpapDataUpdated: {
-            subscribe: (_: any, args: any, context: any) => any;
-        };
+        refreshWidget: (_: any, args: any, _context: any) => Promise<boolean>;
+        refreshCPAPData: (_: any, _args: any, _context: any) => Promise<boolean>;
     };
 };
 //# sourceMappingURL=index.d.ts.map

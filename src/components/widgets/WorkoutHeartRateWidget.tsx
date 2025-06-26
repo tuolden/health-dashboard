@@ -65,8 +65,7 @@ export const WorkoutHeartRateWidget: React.FC<WorkoutHeartRateWidgetProps> = ({ 
     }
   }, [])
 
-  // Register with WebSocket refresh system
-  // const { isRefreshing } = useWidgetRefresh('workout-heart-rate', fetchHeartRateData)
+  // Note: WebSocket refresh system removed - using simple auto-refresh instead
   const isRefreshing = false
 
   // Initial data fetch

@@ -10,7 +10,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLungs, faRefresh, faExclamationTriangle, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import { getCpapApiUrl } from '../../utils/apiConfig'
-import { useWidgetRefresh } from '../../hooks/useWidgetManager'
+
 
 // Types for CPAP SpO2 data
 interface Spo2TrendData {
@@ -117,8 +117,8 @@ export const CpapSpo2TrendWidget: React.FC<CpapSpo2TrendWidgetProps> = ({ classN
     }
   }, [])
 
-  // Register with WebSocket refresh system
-  const { isRefreshing } = useWidgetRefresh('spo2-trend', fetchSpo2Data)
+  // Note: WebSocket refresh system removed - using simple auto-refresh instead
+  const isRefreshing = false
 
   // Initial data fetch
   useEffect(() => {

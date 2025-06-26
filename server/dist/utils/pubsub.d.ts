@@ -1,16 +1,12 @@
 /**
- * Pub/Sub System - Issue #5
+ * Pub/Sub System - Simplified
  *
- * Centralized publish/subscribe system for real-time widget updates
+ * Note: Real-time WebSocket functionality removed.
+ * Keeping minimal PubSub for GraphQL compatibility.
  */
 import { PubSub } from 'graphql-subscriptions';
 export declare const pubsub: PubSub;
-export declare const SUBSCRIPTION_EVENTS: {
-    WIDGET_UPDATED: string;
-    DATASET_REFRESHED: string;
-    WEBHOOK_RECEIVED: string;
-};
-export declare const publishWidgetUpdate: (widgetType: string, data: string) => Promise<void>;
-export declare const publishDatasetRefresh: (datasetName: string, affectedWidgets: string[]) => Promise<void>;
-export declare const publishWebhookReceived: (source: string, payload: string) => Promise<void>;
+export declare const publishDatasetRefresh: (datasetName: string, affectedWidgets: string[]) => void;
+export declare const publishWidgetUpdate: (widgetType: string, _data: string) => void;
+export declare const publishWebhookReceived: (source: string, _payload: string) => void;
 //# sourceMappingURL=pubsub.d.ts.map

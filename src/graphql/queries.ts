@@ -215,44 +215,4 @@ export const REFRESH_WIDGET = gql`
   }
 `
 
-// Subscriptions for Real-time Updates
-export const WIDGET_UPDATED_SUBSCRIPTION = gql`
-  subscription WidgetUpdated($widgetType: String) {
-    widgetUpdated(widgetType: $widgetType) {
-      widgetType
-      data
-      timestamp
-    }
-  }
-`
-
-export const DATASET_REFRESHED_SUBSCRIPTION = gql`
-  subscription DatasetRefreshed($datasetName: String) {
-    datasetRefreshed(datasetName: $datasetName) {
-      datasetName
-      affectedWidgets
-      timestamp
-    }
-  }
-`
-
-export const WEBHOOK_RECEIVED_SUBSCRIPTION = gql`
-  subscription WebhookReceived($source: String) {
-    webhookReceived(source: $source) {
-      source
-      payload
-      timestamp
-    }
-  }
-`
-
-// Combined subscription for all widget updates
-export const ALL_WIDGET_UPDATES_SUBSCRIPTION = gql`
-  subscription AllWidgetUpdates {
-    widgetUpdated {
-      widgetType
-      data
-      timestamp
-    }
-  }
-`
+// Note: Real-time subscriptions removed - using simple auto-refresh instead

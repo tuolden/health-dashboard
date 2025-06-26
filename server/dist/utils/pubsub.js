@@ -1,49 +1,27 @@
 "use strict";
 /**
- * Pub/Sub System - Issue #5
+ * Pub/Sub System - Simplified
  *
- * Centralized publish/subscribe system for real-time widget updates
+ * Note: Real-time WebSocket functionality removed.
+ * Keeping minimal PubSub for GraphQL compatibility.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.publishWebhookReceived = exports.publishDatasetRefresh = exports.publishWidgetUpdate = exports.SUBSCRIPTION_EVENTS = exports.pubsub = void 0;
+exports.publishWebhookReceived = exports.publishWidgetUpdate = exports.publishDatasetRefresh = exports.pubsub = void 0;
 const graphql_subscriptions_1 = require("graphql-subscriptions");
-// Create singleton PubSub instance
+// Create singleton PubSub instance for GraphQL compatibility
 exports.pubsub = new graphql_subscriptions_1.PubSub();
-// Subscription event types
-exports.SUBSCRIPTION_EVENTS = {
-    WIDGET_UPDATED: 'WIDGET_UPDATED',
-    DATASET_REFRESHED: 'DATASET_REFRESHED',
-    WEBHOOK_RECEIVED: 'WEBHOOK_RECEIVED'
-};
-// Helper functions for publishing events
-const publishWidgetUpdate = (widgetType, data) => {
-    return exports.pubsub.publish(exports.SUBSCRIPTION_EVENTS.WIDGET_UPDATED, {
-        widgetUpdated: {
-            widgetType,
-            data,
-            timestamp: new Date().toISOString()
-        }
-    });
-};
-exports.publishWidgetUpdate = publishWidgetUpdate;
+// Note: Subscription events removed - using simple auto-refresh instead
+// Placeholder functions for compatibility (no-op)
 const publishDatasetRefresh = (datasetName, affectedWidgets) => {
-    return exports.pubsub.publish(exports.SUBSCRIPTION_EVENTS.DATASET_REFRESHED, {
-        datasetRefreshed: {
-            datasetName,
-            affectedWidgets,
-            timestamp: new Date().toISOString()
-        }
-    });
+    console.log(`📡 Dataset refresh (no-op): ${datasetName}, widgets: ${affectedWidgets.join(', ')}`);
 };
 exports.publishDatasetRefresh = publishDatasetRefresh;
-const publishWebhookReceived = (source, payload) => {
-    return exports.pubsub.publish(exports.SUBSCRIPTION_EVENTS.WEBHOOK_RECEIVED, {
-        webhookReceived: {
-            source,
-            payload,
-            timestamp: new Date().toISOString()
-        }
-    });
+const publishWidgetUpdate = (widgetType, _data) => {
+    console.log(`📡 Widget update (no-op): ${widgetType}`);
+};
+exports.publishWidgetUpdate = publishWidgetUpdate;
+const publishWebhookReceived = (source, _payload) => {
+    console.log(`📡 Webhook received (no-op): ${source}`);
 };
 exports.publishWebhookReceived = publishWebhookReceived;
 //# sourceMappingURL=pubsub.js.map

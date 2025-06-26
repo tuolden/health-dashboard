@@ -10,7 +10,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeartPulse, faRefresh, faExclamationTriangle, faLungs } from '@fortawesome/free-solid-svg-icons'
 import { getCpapApiUrl } from '../../utils/apiConfig'
-import { useWidgetRefresh } from '../../hooks/useWidgetManager'
+
 
 // Types for CPAP SpO2 + Pulse data
 interface Spo2PulseData {
@@ -91,8 +91,8 @@ export const CpapSpo2PulseWidget: React.FC<CpapSpo2PulseWidgetProps> = ({ classN
     }
   }, [])
 
-  // Register with WebSocket refresh system
-  const { isRefreshing } = useWidgetRefresh('spo2-pulse', fetchSpo2PulseData)
+  // Note: WebSocket refresh system removed - using simple auto-refresh instead
+  const isRefreshing = false
 
   // Initial data fetch
   useEffect(() => {

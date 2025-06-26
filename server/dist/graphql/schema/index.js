@@ -239,24 +239,7 @@ exports.typeDefs = (0, apollo_server_express_1.gql) `
     startTime: DateTime!
   }
 
-  # Subscription Types
-  type WidgetUpdate {
-    widgetType: String!
-    data: String! # JSON stringified data
-    timestamp: DateTime!
-  }
-
-  type DatasetRefresh {
-    datasetName: String!
-    affectedWidgets: [String!]!
-    timestamp: DateTime!
-  }
-
-  type WebhookEvent {
-    source: String!
-    payload: String! # JSON stringified payload
-    timestamp: DateTime!
-  }
+  # Note: Subscription types removed - using simple auto-refresh instead
 
   # HUME Scale Types - Issue #11
   type WeightSession {
@@ -428,15 +411,7 @@ exports.typeDefs = (0, apollo_server_express_1.gql) `
     isActive: Boolean!
   }
 
-  # Root Subscription Type
-  type Subscription {
-    widgetUpdated(widgetType: String): WidgetUpdate!
-    datasetRefreshed(datasetName: String): DatasetRefresh!
-    webhookReceived(source: String): WebhookEvent!
-    
-    # CPAP Data Subscriptions - Issue #7
-    cpapDataUpdated(metricType: String): WidgetUpdate!
-  }
+  # Note: Subscription schema removed - using simple auto-refresh instead
 
   # Mutation Type (for future extensibility)
   type Mutation {

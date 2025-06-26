@@ -1,18 +1,13 @@
 /**
- * Widget Manager Hook - Issue #8
- * 
- * Centralized widget refresh management system that handles WebSocket
- * messages and triggers appropriate widget data refreshes.
+ * Widget Manager Hook
+ *
+ * Centralized widget refresh management system for manual widget refreshes.
+ * WebSocket functionality has been removed in favor of simple auto-refresh.
  */
 
-import { useCallback, useEffect } from 'react'
-import { useWebSocketStore, useWidgetRefreshState, WebSocketMessage } from '../stores/websocketStore'
+import { useCallback, useState } from 'react'
 
 export type WidgetType = 'cpap' | 'spo2-trend' | 'spo2-pulse' | 'leak-rate' | 'sleep-session' | 'all'
-
-interface WidgetRefreshCallbacks {
-  [key: string]: () => Promise<void> | void
-}
 
 interface UseWidgetManagerOptions {
   onWidgetRefresh?: (widgetType: string) => void
@@ -21,9 +16,9 @@ interface UseWidgetManagerOptions {
 
 export const useWidgetManager = (options: UseWidgetManagerOptions = {}) => {
   const { onWidgetRefresh, refreshDelay = 500 } = options
-  
-  const { lastMessage } = useWebSocketStore()
-  const { refreshingWidgets, setWidgetRefreshing } = useWidgetRefreshState()
+
+  const [refreshingWidgets, setRefreshingWidgets] = useState<Set<string>>(new Set())
+  const [lastRefreshTimes, setLastRefreshTimes] = useState<Record<string, Date>>({})
   
   // Registry of widget refresh callbacks
   const widgetCallbacks = new Map<string, () => Promise<void> | void>()
@@ -38,6 +33,23 @@ export const useWidgetManager = (options: UseWidgetManagerOptions = {}) => {
       console.log(`📝 Unregistering widget: ${widgetType}`)
       widgetCallbacks.delete(widgetType)
     }
+  }, [])
+
+  // Helper to update refreshing state
+  const setWidgetRefreshing = useCallback((widgetType: string, refreshing: boolean) => {
+    setRefreshingWidgets(prev => {
+      const newSet = new Set(prev)
+      if (refreshing) {
+        newSet.add(widgetType)
+      } else {
+        newSet.delete(widgetType)
+        setLastRefreshTimes(prevTimes => ({
+          ...prevTimes,
+          [widgetType]: new Date()
+        }))
+      }
+      return newSet
+    })
   }, [])
 
   // Trigger refresh for specific widget type
@@ -100,27 +112,7 @@ export const useWidgetManager = (options: UseWidgetManagerOptions = {}) => {
     await Promise.allSettled(refreshPromises)
   }, [refreshWidget])
 
-  // Handle WebSocket messages
-  const handleWebSocketMessage = useCallback(async (message: WebSocketMessage) => {
-    console.log('📨 Processing WebSocket message for widget refresh:', message)
-
-    if (message.event === 'newDataFor' && message.widgetType) {
-      await refreshWidgetsByType(message.widgetType as WidgetType)
-    } else if (message.event === 'refreshAll') {
-      await refreshWidgetsByType('all')
-    } else if (message.event === 'refreshWidget' && message.data?.widgetType) {
-      await refreshWidget(message.data.widgetType)
-    }
-  }, [refreshWidgetsByType, refreshWidget])
-
-  // Listen for WebSocket messages
-  useEffect(() => {
-    if (lastMessage) {
-      handleWebSocketMessage(lastMessage)
-    }
-  }, [lastMessage, handleWebSocketMessage])
-
-  // Manual refresh functions for testing/debugging
+  // Manual refresh functions
   const manualRefresh = useCallback(async (widgetType: WidgetType = 'all') => {
     console.log(`🔧 Manual refresh triggered for: ${widgetType}`)
     await refreshWidgetsByType(widgetType)

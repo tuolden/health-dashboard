@@ -74,63 +74,7 @@ async function startServer() {
         server: httpServer,
         path: '/graphql'
     });
-    // Create WebSocket server for widget push notifications - Issue #8
-    const widgetWsServer = new ws_1.WebSocketServer({
-        server: httpServer,
-        path: '/ws'
-    });
-    // Handle widget WebSocket connections
-    widgetWsServer.on('connection', (ws, req) => {
-        console.log('🔌 Widget WebSocket client connected from:', req.socket.remoteAddress);
-        // Send welcome message
-        ws.send(JSON.stringify({
-            event: 'connected',
-            message: 'Widget WebSocket connection established',
-            timestamp: new Date().toISOString()
-        }));
-        // Handle incoming messages
-        ws.on('message', (data) => {
-            try {
-                const message = JSON.parse(data.toString());
-                console.log('📨 Widget WebSocket message received:', message);
-                // Echo back for testing
-                if (message.event === 'ping') {
-                    ws.send(JSON.stringify({
-                        event: 'pong',
-                        timestamp: new Date().toISOString()
-                    }));
-                }
-            }
-            catch (error) {
-                console.error('❌ Error parsing WebSocket message:', error);
-            }
-        });
-        // Handle connection close
-        ws.on('close', () => {
-            console.log('🔌 Widget WebSocket client disconnected');
-        });
-        // Handle errors
-        ws.on('error', (error) => {
-            console.error('❌ Widget WebSocket error:', error);
-        });
-    });
-    // Function to broadcast widget refresh messages
-    const broadcastWidgetRefresh = (widgetType, data) => {
-        const message = {
-            event: 'newDataFor',
-            widgetType,
-            data,
-            timestamp: new Date().toISOString()
-        };
-        console.log('📡 Broadcasting widget refresh:', message);
-        widgetWsServer.clients.forEach((client) => {
-            if (client.readyState === client.OPEN) {
-                client.send(JSON.stringify(message));
-            }
-        });
-    };
-    // Store broadcast function for use in routes
-    app.locals['broadcastWidgetRefresh'] = broadcastWidgetRefresh;
+    // Note: WebSocket functionality removed - using simple auto-refresh instead
     // Set up GraphQL WebSocket server
     const serverDispose = (0, ws_2.useServer)({
         schema,
@@ -179,25 +123,7 @@ async function startServer() {
     app.use('/api/scale', scaleRoutes_1.default);
     // Bloodwork Lab REST API routes - Issue #13
     app.use('/api/labs', bloodworkRoutes_1.default);
-    // Test endpoint for triggering widget refresh - Issue #8
-    app.post('/api/test/refresh-widget', (req, res) => {
-        const { widgetType = 'cpap', data } = req.body;
-        console.log(`🧪 Test endpoint: Triggering refresh for widget type: ${widgetType}`);
-        if (app.locals['broadcastWidgetRefresh']) {
-            app.locals['broadcastWidgetRefresh'](widgetType, data);
-            res.json({
-                success: true,
-                message: `Refresh triggered for widget type: ${widgetType}`,
-                timestamp: new Date().toISOString()
-            });
-        }
-        else {
-            res.status(500).json({
-                success: false,
-                error: 'Broadcast function not available'
-            });
-        }
-    });
+    // Note: Widget refresh test endpoint removed - using auto-refresh instead
     // Health check endpoint
     app.get('/health', (_req, res) => {
         res.json({
@@ -214,7 +140,6 @@ async function startServer() {
             endpoints: {
                 graphql: '/graphql',
                 websocket: 'ws://localhost:' + PORT + '/graphql',
-                widgetWebSocket: 'ws://localhost:' + PORT + '/ws',
                 webhooks: '/api/webhook/*',
                 cpap: {
                     dailySummary: '/api/cpap/daily-summary',
