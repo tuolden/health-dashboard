@@ -341,48 +341,67 @@ router.get('/summary/:date', async (req: Request, res: Response): Promise<void> 
         return
       }
 
-      // Group results by category
-      const categories: { [key: string]: any[] } = {}
-      const categoryStats: { [key: string]: { total: number, inRange: number, outOfRange: number } } = {}
-
-      dateResults.forEach(result => {
+      // Create enhanced results with range checking
+      const enhancedResults = dateResults.map(result => {
         const metric = mockData.labMetrics.find(m => m.test_name === result.test_name)
-        if (metric) {
-          if (!categories[metric.category]) {
-            categories[metric.category] = []
-            categoryStats[metric.category] = { total: 0, inRange: 0, outOfRange: 0 }
-          }
+        const isInRange = metric ? result.numeric_value >= metric.range_min && result.numeric_value <= metric.range_max : true
 
-          const isInRange = result.numeric_value >= metric.range_min && result.numeric_value <= metric.range_max
-
-          categories[metric.category]?.push({
-            ...result,
-            metric,
-            is_in_range: isInRange
-          })
-
-          const stats = categoryStats[metric.category]
-          if (stats) {
-            stats.total++
-            if (isInRange) {
-              stats.inRange++
-            } else {
-              stats.outOfRange++
-            }
-          }
+        return {
+          ...result,
+          metric,
+          is_in_range: isInRange,
+          risk_level: isInRange ? 'normal' : 'elevated'
         }
       })
 
-      summary = {
-        date,
-        totalTests: dateResults.length,
-        categories,
-        categoryStats,
-        overallStats: {
-          total: dateResults.length,
-          inRange: Object.values(categoryStats).reduce((sum, cat) => sum + cat.inRange, 0),
-          outOfRange: Object.values(categoryStats).reduce((sum, cat) => sum + cat.outOfRange, 0)
+      // Calculate overall stats
+      const totalTests = enhancedResults.length
+      const inRangeCount = enhancedResults.filter(r => r.is_in_range).length
+      const outOfRangeCount = totalTests - inRangeCount
+      const criticalCount = enhancedResults.filter(r => r.risk_level === 'critical').length
+
+      // Group by panels (using the expected LabSummary format)
+      const panels: any[] = []
+      const categoryMap: { [key: string]: string } = {
+        'CBC': 'Complete Blood Count',
+        'LIPID': 'Lipid Panel',
+        'CMP': 'Comprehensive Metabolic Panel',
+        'LIVER': 'Liver Function',
+        'THYROID': 'Thyroid Function',
+        'HORMONE': 'Hormone Panel'
+      }
+
+      Object.keys(categoryMap).forEach(categoryKey => {
+        const categoryResults = enhancedResults.filter(r => r.metric?.category === categoryKey)
+
+        if (categoryResults.length > 0) {
+          const abnormalCount = categoryResults.filter(r => !r.is_in_range).length
+          const hasCritical = categoryResults.some(r => r.risk_level === 'critical')
+
+          panels.push({
+            panel_name: categoryMap[categoryKey],
+            tests: categoryResults,
+            overall_status: abnormalCount === 0 ? 'normal' : (hasCritical ? 'critical' : 'abnormal'),
+            abnormal_count: abnormalCount,
+            total_count: categoryResults.length
+          })
         }
+      })
+
+      // Get top concerns (tests that are out of range)
+      const topConcerns = enhancedResults
+        .filter(r => !r.is_in_range)
+        .slice(0, 3)
+
+      summary = {
+        collected_on: date,
+        total_tests: totalTests,
+        in_range_count: inRangeCount,
+        out_of_range_count: outOfRangeCount,
+        critical_count: criticalCount,
+        panels,
+        top_concerns: topConcerns,
+        overall_health_score: Math.round((inRangeCount / totalTests) * 100)
       }
     } else {
       // Use database operation (not implemented yet)
