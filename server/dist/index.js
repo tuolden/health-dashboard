@@ -5,6 +5,39 @@
  * Main server entry point with Apollo Server, Express, WebSocket support
  * for real-time widget updates, webhook integration, and CPAP REST API.
  */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -29,6 +62,7 @@ const cpapRoutes_1 = __importDefault(require("./routes/cpapRoutes"));
 const workoutRoutes_1 = __importDefault(require("./routes/workoutRoutes"));
 const scaleRoutes_1 = __importDefault(require("./routes/scaleRoutes"));
 const bloodworkRoutes_1 = __importDefault(require("./routes/bloodworkRoutes"));
+const customDashboards_1 = __importDefault(require("./routes/customDashboards"));
 const PORT = process.env['PORT'] || 4000;
 const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000';
 async function startServer() {
@@ -40,6 +74,10 @@ async function startServer() {
     await (0, bloodworkDatabase_1.testBloodworkConnection)();
     console.log('🧬 Initializing Bloodwork database tables...');
     await (0, bloodworkDatabase_1.initializeBloodworkTables)();
+    console.log('📊 Initializing Custom Dashboard tables...');
+    const { CustomDashboardDao } = await Promise.resolve().then(() => __importStar(require('./database/customDashboardDao')));
+    const customDashboardDao = new CustomDashboardDao();
+    await customDashboardDao.initializeTables();
     // Create Express app
     const app = (0, express_1.default)();
     // Security middleware
@@ -123,6 +161,8 @@ async function startServer() {
     app.use('/api/scale', scaleRoutes_1.default);
     // Bloodwork Lab REST API routes - Issue #13
     app.use('/api/labs', bloodworkRoutes_1.default);
+    // Custom Dashboard REST API routes - Issue #15
+    app.use('/api/custom-dashboards', customDashboards_1.default);
     // Note: Widget refresh test endpoint removed - using auto-refresh instead
     // Health check endpoint
     app.get('/health', (_req, res) => {
@@ -175,9 +215,18 @@ async function startServer() {
                     dates: '/api/labs/dates',
                     health: '/api/labs/health'
                 },
+                customDashboards: {
+                    list: '/api/custom-dashboards',
+                    create: 'POST /api/custom-dashboards',
+                    get: '/api/custom-dashboards/:id',
+                    update: 'PUT /api/custom-dashboards/:id',
+                    addWidget: 'POST /api/custom-dashboards/:id/widgets',
+                    updateWidget: 'PUT /api/custom-dashboards/:id/widgets/:widgetId',
+                    removeWidget: 'DELETE /api/custom-dashboards/:id/widgets/:widgetId'
+                },
                 health: '/health'
             },
-            documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details, Issue #11 for Scale API details, Issue #13 for Bloodwork Lab API details'
+            documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details, Issue #11 for Scale API details, Issue #13 for Bloodwork Lab API details, Issue #15 for Custom Dashboard API details'
         });
     });
     // Start HTTP server

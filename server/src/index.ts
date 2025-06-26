@@ -26,6 +26,7 @@ import cpapRoutes from './routes/cpapRoutes'
 import workoutRoutes from './routes/workoutRoutes'
 import scaleRoutes from './routes/scaleRoutes'
 import bloodworkRoutes from './routes/bloodworkRoutes'
+import customDashboardRoutes from './routes/customDashboards'
 
 const PORT = process.env['PORT'] || 4000
 const FRONTEND_URL = process.env['FRONTEND_URL'] || 'http://localhost:3000'
@@ -42,6 +43,11 @@ async function startServer() {
 
   console.log('🧬 Initializing Bloodwork database tables...')
   await initializeBloodworkTables()
+
+  console.log('📊 Initializing Custom Dashboard tables...')
+  const { CustomDashboardDao } = await import('./database/customDashboardDao')
+  const customDashboardDao = new CustomDashboardDao()
+  await customDashboardDao.initializeTables()
 
   // Create Express app
   const app = express()
@@ -148,6 +154,9 @@ async function startServer() {
   // Bloodwork Lab REST API routes - Issue #13
   app.use('/api/labs', bloodworkRoutes)
 
+  // Custom Dashboard REST API routes - Issue #15
+  app.use('/api/custom-dashboards', customDashboardRoutes)
+
   // Note: Widget refresh test endpoint removed - using auto-refresh instead
 
   // Health check endpoint
@@ -202,9 +211,18 @@ async function startServer() {
           dates: '/api/labs/dates',
           health: '/api/labs/health'
         },
+        customDashboards: {
+          list: '/api/custom-dashboards',
+          create: 'POST /api/custom-dashboards',
+          get: '/api/custom-dashboards/:id',
+          update: 'PUT /api/custom-dashboards/:id',
+          addWidget: 'POST /api/custom-dashboards/:id/widgets',
+          updateWidget: 'PUT /api/custom-dashboards/:id/widgets/:widgetId',
+          removeWidget: 'DELETE /api/custom-dashboards/:id/widgets/:widgetId'
+        },
         health: '/health'
       },
-      documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details, Issue #11 for Scale API details, Issue #13 for Bloodwork Lab API details'
+      documentation: 'See GitHub Issue #7 for CPAP API details, Issue #9 for Workout API details, Issue #11 for Scale API details, Issue #13 for Bloodwork Lab API details, Issue #15 for Custom Dashboard API details'
     })
   })
 

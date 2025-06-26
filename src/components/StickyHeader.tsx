@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import Icon from './Icon'
 
 interface StickyHeaderProps {
@@ -16,6 +17,7 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
 }) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const location = useLocation()
 
   // Format last updated time for display
   const formatLastUpdated = (date: Date | null): string => {
@@ -75,18 +77,22 @@ const StickyHeader: React.FC<StickyHeaderProps> = ({
 
         {/* Navigation Links */}
         <nav className="flex gap-x-6 text-base font-medium" style={{ color: '#101316' }}>
-          <a 
-            href="/dashboard" 
-            className="hover:text-primary transition-colors duration-200"
+          <Link
+            to="/"
+            className={`hover:text-primary transition-colors duration-200 ${
+              location.pathname === '/' ? 'text-blue-600 font-semibold' : ''
+            }`}
           >
             Dashboard
-          </a>
-          <a 
-            href="/vitals" 
-            className="hover:text-primary transition-colors duration-200"
+          </Link>
+          <Link
+            to="/custom-dashboards"
+            className={`hover:text-primary transition-colors duration-200 ${
+              location.pathname.startsWith('/custom-dashboards') ? 'text-blue-600 font-semibold' : ''
+            }`}
           >
-            Vitals
-          </a>
+            Custom Dashboards
+          </Link>
         </nav>
       </div>
 

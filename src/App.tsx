@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/client'
 import { apolloClient } from './graphql/client'
 import Dashboard from './components/Dashboard'
+import CustomDashboardList from './components/CustomDashboardList'
+import CustomDashboardBuilder from './components/CustomDashboardBuilder'
 import './App.css'
 
 function App() {
@@ -65,7 +68,15 @@ function App() {
 
   return (
     <ApolloProvider client={apolloClient}>
-      <Dashboard />
+      <Router>
+        <div className="App">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/custom-dashboards" element={<CustomDashboardList />} />
+            <Route path="/custom-dashboards/:id" element={<CustomDashboardBuilder />} />
+          </Routes>
+        </div>
+      </Router>
     </ApolloProvider>
   )
 }
