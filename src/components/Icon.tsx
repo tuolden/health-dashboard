@@ -27,6 +27,12 @@ import {
   faEyeSlash,
   faGrip,
   faSearch,
+  faArrowUp,
+  faArrowDown,
+  faCalendar,
+  faPercent,
+  faDumbbell,
+  faBalanceScale,
   IconDefinition
 } from '@fortawesome/free-solid-svg-icons'
 
@@ -66,6 +72,16 @@ export const iconMap = {
   eyeSlash: faEyeSlash,
   grid: faGrip,
   search: faSearch,
+
+  // Trend Icons
+  'trending-up': faArrowUp,
+  'trending-down': faArrowDown,
+
+  // Additional Icons
+  calendar: faCalendar,
+  percentage: faPercent,
+  muscle: faDumbbell,
+  'weight-scale': faBalanceScale,
 } as const
 
 export type IconName = keyof typeof iconMap
