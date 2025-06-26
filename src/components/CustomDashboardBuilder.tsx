@@ -8,6 +8,8 @@ import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faEye, faSun, faMoon, faClock, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import GridLayout from './GridLayout'
+import WidgetPicker from './WidgetPicker'
 
 interface CustomDashboard {
   id: number
@@ -43,6 +45,8 @@ const CustomDashboardBuilder: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
   const [editMode, setEditMode] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
+  const [showWidgetPicker, setShowWidgetPicker] = useState(false)
+  const [selectedGridPosition, setSelectedGridPosition] = useState<{ x: number, y: number } | null>(null)
 
   // Time range options
   const timeRangeOptions = [
@@ -116,6 +120,137 @@ const CustomDashboardBuilder: React.FC = () => {
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
     document.documentElement.classList.toggle('dark', !darkMode)
+  }
+
+  // Handle adding widget to grid
+  const handleAddWidget = (gridX: number, gridY: number) => {
+    console.log('🧩 [CustomDashboardBuilder] Adding widget at:', gridX, gridY)
+    setSelectedGridPosition({ x: gridX, y: gridY })
+    setShowWidgetPicker(true)
+  }
+
+  // Handle widget selection from picker
+  const handleSelectWidget = async (widgetType: string, size: 'small' | 'medium' | 'large') => {
+    if (!dashboard || !selectedGridPosition) return
+
+    try {
+      console.log('🧩 [CustomDashboardBuilder] Creating widget:', widgetType, size, selectedGridPosition)
+
+      const response = await fetch(`/api/custom-dashboards/${dashboard.id}/widgets`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          widget_type: widgetType,
+          grid_x: selectedGridPosition.x,
+          grid_y: selectedGridPosition.y,
+          size: size,
+          widget_config: {}
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to add widget')
+      }
+
+      console.log('✅ [CustomDashboardBuilder] Widget added:', data.data)
+      await fetchDashboard() // Refresh dashboard
+      setSelectedGridPosition(null)
+    } catch (err) {
+      console.error('❌ [CustomDashboardBuilder] Error adding widget:', err)
+      setError(err instanceof Error ? err.message : 'Failed to add widget')
+    }
+  }
+
+  // Handle removing widget
+  const handleRemoveWidget = async (widgetId: number) => {
+    if (!dashboard) return
+
+    try {
+      console.log('🗑️ [CustomDashboardBuilder] Removing widget:', widgetId)
+
+      const response = await fetch(`/api/custom-dashboards/${dashboard.id}/widgets/${widgetId}`, {
+        method: 'DELETE'
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to remove widget')
+      }
+
+      console.log('✅ [CustomDashboardBuilder] Widget removed')
+      await fetchDashboard() // Refresh dashboard
+    } catch (err) {
+      console.error('❌ [CustomDashboardBuilder] Error removing widget:', err)
+      setError(err instanceof Error ? err.message : 'Failed to remove widget')
+    }
+  }
+
+  // Handle resizing widget
+  const handleResizeWidget = async (widgetId: number, newSize: 'small' | 'medium' | 'large') => {
+    if (!dashboard) return
+
+    try {
+      console.log('📏 [CustomDashboardBuilder] Resizing widget:', widgetId, newSize)
+
+      const response = await fetch(`/api/custom-dashboards/${dashboard.id}/widgets/${widgetId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          size: newSize
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to resize widget')
+      }
+
+      console.log('✅ [CustomDashboardBuilder] Widget resized')
+      await fetchDashboard() // Refresh dashboard
+    } catch (err) {
+      console.error('❌ [CustomDashboardBuilder] Error resizing widget:', err)
+      setError(err instanceof Error ? err.message : 'Failed to resize widget')
+    }
+  }
+
+  // Handle moving widget (placeholder for future drag & drop)
+  const handleMoveWidget = async (widgetId: number, newX: number, newY: number) => {
+    if (!dashboard) return
+
+    try {
+      console.log('📍 [CustomDashboardBuilder] Moving widget:', widgetId, newX, newY)
+
+      const response = await fetch(`/api/custom-dashboards/${dashboard.id}/widgets/${widgetId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          grid_x: newX,
+          grid_y: newY
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to move widget')
+      }
+
+      console.log('✅ [CustomDashboardBuilder] Widget moved')
+      await fetchDashboard() // Refresh dashboard
+    } catch (err) {
+      console.error('❌ [CustomDashboardBuilder] Error moving widget:', err)
+      setError(err instanceof Error ? err.message : 'Failed to move widget')
+    }
   }
 
   // Load dashboard on mount
@@ -233,37 +368,44 @@ const CustomDashboardBuilder: React.FC = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-800">{error}</p>
+            <button
+              onClick={() => setError(null)}
+              className="mt-2 text-sm text-red-600 hover:text-red-800"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
         {/* Grid Layout Area */}
         <div className={`rounded-lg border ${
           darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-white'
-        } p-6`}>
-          {editMode ? (
-            <div className="text-center py-12">
-              <h3 className={`text-lg font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                Edit Mode Active
-              </h3>
-              <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
-                Grid layout and widget management will be implemented in Phase 2
-              </p>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <h3 className={`text-lg font-medium mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                View Mode
-              </h3>
-              <p className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
-                Widget display will be implemented in Phase 2
-              </p>
-              {dashboard.widgets && dashboard.widgets.length > 0 && (
-                <div className="mt-4">
-                  <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {dashboard.widgets.length} widget(s) configured
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+        } overflow-hidden`}>
+          <GridLayout
+            widgets={dashboard.widgets || []}
+            editMode={editMode}
+            onAddWidget={handleAddWidget}
+            onRemoveWidget={handleRemoveWidget}
+            onResizeWidget={handleResizeWidget}
+            onMoveWidget={handleMoveWidget}
+            darkMode={darkMode}
+          />
         </div>
+
+        {/* Widget Picker Modal */}
+        <WidgetPicker
+          isOpen={showWidgetPicker}
+          onClose={() => {
+            setShowWidgetPicker(false)
+            setSelectedGridPosition(null)
+          }}
+          onSelectWidget={handleSelectWidget}
+          darkMode={darkMode}
+        />
       </div>
     </div>
   )
