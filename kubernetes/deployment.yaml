@@ -8,7 +8,7 @@ metadata:
     version: v1
   annotations:
     argocd.argoproj.io/sync-wave: "1"
-    deployment.kubernetes.io/revision: "v-2025-06-25-18-16-f4141b74"
+    deployment.kubernetes.io/revision: "v-2025-06-26-16-28-3140f0a6"
 spec:
   replicas: 1
   selector:
@@ -21,8 +21,8 @@ spec:
         version: v1
       annotations:
         argocd.argoproj.io/tracking-id: "health-dashboard:apps/Deployment:goal-app/health-dashboard"
-        deployment.kubernetes.io/revision: "v-2025-06-25-18-16-f4141b74"
-        kubectl.kubernetes.io/restartedAt: "2025-06-25T18:16:30Z"
+        deployment.kubernetes.io/revision: "v-2025-06-26-16-28-3140f0a6"
+        kubectl.kubernetes.io/restartedAt: "2025-06-26T16:28:59Z"
     spec:
       containers:
       - name: health-dashboard
