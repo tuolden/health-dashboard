@@ -7,10 +7,12 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import CustomDashboardWidget from './CustomDashboardWidget'
 
 interface GridLayoutProps {
   widgets: CustomDashboardWidget[]
   editMode: boolean
+  timeRange: string
   onAddWidget: (gridX: number, gridY: number) => void
   onRemoveWidget: (widgetId: number) => void
   onResizeWidget: (widgetId: number, newSize: 'small' | 'medium' | 'large') => void
@@ -36,6 +38,7 @@ interface CustomDashboardWidget {
 const GridLayout: React.FC<GridLayoutProps> = ({
   widgets,
   editMode,
+  timeRange,
   onAddWidget,
   onRemoveWidget,
   onResizeWidget,
@@ -141,17 +144,15 @@ const GridLayout: React.FC<GridLayoutProps> = ({
               )}
             </div>
             
-            {/* Widget preview content */}
-            <div className={`flex-1 flex items-center justify-center text-xs ${
-              darkMode ? 'text-gray-400' : 'text-gray-500'
-            }`}>
-              <div className="text-center">
-                <div className="mb-1">📊</div>
-                <div>Widget Preview</div>
-                <div className="mt-1 text-xs opacity-75">
-                  {occupyingWidget.size.toUpperCase()} • {x},{y}
-                </div>
-              </div>
+            {/* Actual Widget Component */}
+            <div className="flex-1 overflow-hidden">
+              <CustomDashboardWidget
+                widgetType={occupyingWidget.widget_type}
+                size={occupyingWidget.size}
+                timeRange={timeRange}
+                widgetConfig={occupyingWidget.widget_config}
+                darkMode={darkMode}
+              />
             </div>
           </div>
         </div>

@@ -388,6 +388,7 @@ const CustomDashboardBuilder: React.FC = () => {
           <GridLayout
             widgets={dashboard.widgets || []}
             editMode={editMode}
+            timeRange={dashboard.time_range}
             onAddWidget={handleAddWidget}
             onRemoveWidget={handleRemoveWidget}
             onResizeWidget={handleResizeWidget}
