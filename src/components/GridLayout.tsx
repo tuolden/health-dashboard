@@ -20,16 +20,7 @@ interface GridLayoutProps {
   darkMode?: boolean
 }
 
-interface CustomDashboardWidget {
-  id: number
-  dashboard_id: number
-  widget_type: string
-  grid_x: number
-  grid_y: number
-  size: 'small' | 'medium' | 'large'
-  widget_config: Record<string, any>
-  created_at: string
-}
+// CustomDashboardWidget interface is imported from the parent component
 
 /**
  * Grid Layout Component

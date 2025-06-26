@@ -70,35 +70,39 @@ const CustomDashboardWidget: React.FC<CustomDashboardWidgetProps> = ({
           startDate: today.toISOString().split('T')[0],
           endDate: today.toISOString().split('T')[0]
         }
-      case 'yesterday':
+      case 'yesterday': {
         const yesterday = new Date(today)
         yesterday.setDate(yesterday.getDate() - 1)
         return {
           startDate: yesterday.toISOString().split('T')[0],
           endDate: yesterday.toISOString().split('T')[0]
         }
-      case 'this_week':
+      }
+      case 'this_week': {
         const weekStart = new Date(today)
         weekStart.setDate(weekStart.getDate() - weekStart.getDay())
         return {
           startDate: weekStart.toISOString().split('T')[0],
           endDate: today.toISOString().split('T')[0]
         }
-      case 'last_2_weeks':
+      }
+      case 'last_2_weeks': {
         const twoWeeksAgo = new Date(today)
         twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14)
         return {
           startDate: twoWeeksAgo.toISOString().split('T')[0],
           endDate: today.toISOString().split('T')[0]
         }
-      case 'last_month':
+      }
+      case 'last_month': {
         const monthAgo = new Date(today)
         monthAgo.setMonth(monthAgo.getMonth() - 1)
         return {
           startDate: monthAgo.toISOString().split('T')[0],
           endDate: today.toISOString().split('T')[0]
         }
-      case 'mom':
+      }
+      case 'mom': {
         const lastMonth = new Date(today)
         lastMonth.setMonth(lastMonth.getMonth() - 1)
         const lastMonthStart = new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1)
@@ -107,13 +111,15 @@ const CustomDashboardWidget: React.FC<CustomDashboardWidgetProps> = ({
           startDate: lastMonthStart.toISOString().split('T')[0],
           endDate: lastMonthEnd.toISOString().split('T')[0]
         }
-      case 'last_year':
+      }
+      case 'last_year': {
         const yearAgo = new Date(today)
         yearAgo.setFullYear(yearAgo.getFullYear() - 1)
         return {
           startDate: yearAgo.toISOString().split('T')[0],
           endDate: today.toISOString().split('T')[0]
         }
+      }
       default:
         return {
           startDate: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
