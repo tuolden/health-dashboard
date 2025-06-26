@@ -4,10 +4,10 @@
  * Main builder interface for creating and editing custom widget layouts
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faEye, faSun, faMoon, faClock, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faEye, faSun, faMoon, faClock, faArrowLeft, faQuestionCircle, faKeyboard } from '@fortawesome/free-solid-svg-icons'
 import GridLayout from './GridLayout'
 import WidgetPicker from './WidgetPicker'
 
@@ -47,6 +47,8 @@ const CustomDashboardBuilder: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false)
   const [showWidgetPicker, setShowWidgetPicker] = useState(false)
   const [selectedGridPosition, setSelectedGridPosition] = useState<{ x: number, y: number } | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
 
   // Time range options
   const timeRangeOptions = [
@@ -85,9 +87,14 @@ const CustomDashboardBuilder: React.FC = () => {
     }
   }
 
-  // Update dashboard time range
-  const updateTimeRange = async (newTimeRange: string) => {
-    if (!dashboard) return
+  // Update dashboard time range (memoized for performance)
+  const updateTimeRange = useCallback(async (newTimeRange: string) => {
+    if (!dashboard || isUpdating) return
+
+    // Optimistic update
+    const originalTimeRange = dashboard.time_range
+    setDashboard({ ...dashboard, time_range: newTimeRange })
+    setIsUpdating(true)
 
     try {
       console.log('🕒 [CustomDashboardBuilder] Updating time range:', newTimeRange)
@@ -105,16 +112,19 @@ const CustomDashboardBuilder: React.FC = () => {
       const data = await response.json()
 
       if (!response.ok) {
+        // Revert optimistic update
+        setDashboard({ ...dashboard, time_range: originalTimeRange })
         throw new Error(data.message || 'Failed to update time range')
       }
 
-      setDashboard({ ...dashboard, time_range: newTimeRange })
       console.log('✅ [CustomDashboardBuilder] Time range updated')
     } catch (err) {
       console.error('❌ [CustomDashboardBuilder] Error updating time range:', err)
       setError(err instanceof Error ? err.message : 'Failed to update time range')
+    } finally {
+      setIsUpdating(false)
     }
-  }
+  }, [dashboard, isUpdating])
 
   // Toggle dark mode
   const toggleDarkMode = () => {
@@ -122,12 +132,12 @@ const CustomDashboardBuilder: React.FC = () => {
     document.documentElement.classList.toggle('dark', !darkMode)
   }
 
-  // Handle adding widget to grid
-  const handleAddWidget = (gridX: number, gridY: number) => {
+  // Handle adding widget to grid (memoized for performance)
+  const handleAddWidget = useCallback((gridX: number, gridY: number) => {
     console.log('🧩 [CustomDashboardBuilder] Adding widget at:', gridX, gridY)
     setSelectedGridPosition({ x: gridX, y: gridY })
     setShowWidgetPicker(true)
-  }
+  }, [])
 
   // Handle widget selection from picker
   const handleSelectWidget = async (widgetType: string, size: 'small' | 'medium' | 'large') => {
@@ -165,9 +175,14 @@ const CustomDashboardBuilder: React.FC = () => {
     }
   }
 
-  // Handle removing widget
-  const handleRemoveWidget = async (widgetId: number) => {
+  // Handle removing widget (memoized for performance)
+  const handleRemoveWidget = useCallback(async (widgetId: number) => {
     if (!dashboard) return
+
+    // Optimistic update - remove widget from UI immediately
+    const originalWidgets = dashboard.widgets || []
+    const updatedWidgets = originalWidgets.filter(w => w.id !== widgetId)
+    setDashboard({ ...dashboard, widgets: updatedWidgets })
 
     try {
       console.log('🗑️ [CustomDashboardBuilder] Removing widget:', widgetId)
@@ -179,16 +194,18 @@ const CustomDashboardBuilder: React.FC = () => {
       const data = await response.json()
 
       if (!response.ok) {
+        // Revert optimistic update on error
+        setDashboard({ ...dashboard, widgets: originalWidgets })
         throw new Error(data.message || 'Failed to remove widget')
       }
 
       console.log('✅ [CustomDashboardBuilder] Widget removed')
-      await fetchDashboard() // Refresh dashboard
     } catch (err) {
       console.error('❌ [CustomDashboardBuilder] Error removing widget:', err)
       setError(err instanceof Error ? err.message : 'Failed to remove widget')
+      // Dashboard already reverted in the error case above
     }
-  }
+  }, [dashboard])
 
   // Handle resizing widget
   const handleResizeWidget = async (widgetId: number, newSize: 'small' | 'medium' | 'large') => {
@@ -257,6 +274,61 @@ const CustomDashboardBuilder: React.FC = () => {
   useEffect(() => {
     fetchDashboard()
   }, [id])
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // Only handle shortcuts when not in an input field
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) {
+        return
+      }
+
+      switch (event.key) {
+        case 'e':
+        case 'E':
+          if (event.ctrlKey || event.metaKey) {
+            event.preventDefault()
+            setEditMode(!editMode)
+          }
+          break
+        case 'd':
+        case 'D':
+          if (event.ctrlKey || event.metaKey) {
+            event.preventDefault()
+            toggleDarkMode()
+          }
+          break
+        case 'Escape':
+          if (showWidgetPicker) {
+            setShowWidgetPicker(false)
+            setSelectedGridPosition(null)
+          }
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [editMode, showWidgetPicker, toggleDarkMode])
+
+  // Memoize widget count for performance
+  const widgetCount = useMemo(() => {
+    return dashboard?.widgets?.length || 0
+  }, [dashboard?.widgets])
+
+  // Memoize time range display
+  const timeRangeDisplay = useMemo(() => {
+    const timeRangeMap: Record<string, string> = {
+      'today': 'Today',
+      'yesterday': 'Yesterday',
+      'this_week': 'This Week',
+      'last_2_weeks': 'Last 2 Weeks',
+      'last_month': 'Last Month',
+      'mom': 'Month over Month',
+      'last_year': 'Last Year'
+    }
+    return timeRangeMap[dashboard?.time_range || 'last_month'] || dashboard?.time_range || 'Last Month'
+  }, [dashboard?.time_range])
 
   // Loading state
   if (loading) {
@@ -347,6 +419,21 @@ const CustomDashboardBuilder: React.FC = () => {
                 <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
               </button>
 
+              {/* Help Button */}
+              <button
+                onClick={() => setShowHelp(!showHelp)}
+                className={`p-2 rounded-lg ${
+                  showHelp
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : darkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+                title="Show keyboard shortcuts and help"
+              >
+                <FontAwesomeIcon icon={faQuestionCircle} />
+              </button>
+
               {/* Edit/View Mode Toggle */}
               <button
                 onClick={() => setEditMode(!editMode)}
@@ -357,6 +444,7 @@ const CustomDashboardBuilder: React.FC = () => {
                     ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
+                title={`Switch to ${editMode ? 'view' : 'edit'} mode (Ctrl+E)`}
               >
                 <FontAwesomeIcon icon={editMode ? faEye : faEdit} />
                 {editMode ? 'View Mode' : 'Edit Mode'}
@@ -370,14 +458,133 @@ const CustomDashboardBuilder: React.FC = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Error Message */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-red-800">{error}</p>
+          <div className={`mb-6 rounded-lg p-4 border ${
+            darkMode
+              ? 'bg-red-900 border-red-700 text-red-200'
+              : 'bg-red-50 border-red-200 text-red-800'
+          }`}>
+            <p>{error}</p>
             <button
               onClick={() => setError(null)}
-              className="mt-2 text-sm text-red-600 hover:text-red-800"
+              className={`mt-2 text-sm hover:underline ${
+                darkMode ? 'text-red-300 hover:text-red-100' : 'text-red-600 hover:text-red-800'
+              }`}
             >
               Dismiss
             </button>
+          </div>
+        )}
+
+        {/* Dashboard Statistics */}
+        {!loading && dashboard && (
+          <div className={`mb-6 rounded-lg p-4 border ${
+            darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <div className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {widgetCount}
+                  </div>
+                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Widget{widgetCount !== 1 ? 's' : ''}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {timeRangeDisplay}
+                  </div>
+                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Time Range
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                    {editMode ? 'Edit' : 'View'}
+                  </div>
+                  <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Mode
+                  </div>
+                </div>
+              </div>
+
+              {isUpdating && (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  <span className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    Updating...
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Help Panel */}
+        {showHelp && (
+          <div className={`mb-6 rounded-lg p-6 border ${
+            darkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-blue-50'
+          }`}>
+            <div className="flex items-center gap-2 mb-4">
+              <FontAwesomeIcon icon={faKeyboard} className={darkMode ? 'text-blue-400' : 'text-blue-600'} />
+              <h3 className={`text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                Keyboard Shortcuts & Help
+              </h3>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className={`font-medium mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  Keyboard Shortcuts
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Toggle Edit/View Mode:</span>
+                    <code className={`px-2 py-1 rounded ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-800'}`}>
+                      Ctrl+E
+                    </code>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Toggle Dark Mode:</span>
+                    <code className={`px-2 py-1 rounded ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-800'}`}>
+                      Ctrl+D
+                    </code>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className={darkMode ? 'text-gray-400' : 'text-gray-600'}>Close Modal:</span>
+                    <code className={`px-2 py-1 rounded ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-800'}`}>
+                      Escape
+                    </code>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className={`font-medium mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                  How to Use
+                </h4>
+                <div className="space-y-2 text-sm">
+                  <div className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    • <strong>Edit Mode:</strong> Click + buttons to add widgets
+                  </div>
+                  <div className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    • <strong>Widget Sizes:</strong> Small (1×1), Medium (2×1), Large (4×1)
+                  </div>
+                  <div className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    • <strong>Time Range:</strong> Affects all widgets on the page
+                  </div>
+                  <div className={darkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    • <strong>View Mode:</strong> Clean widget display
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600">
+              <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                💡 <strong>Tip:</strong> Changes are saved automatically. Use the time range selector to view different data periods across all widgets.
+              </p>
+            </div>
           </div>
         )}
 
