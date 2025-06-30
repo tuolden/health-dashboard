@@ -75,9 +75,16 @@ async function startServer() {
     console.log('🧬 Initializing Bloodwork database tables...');
     await (0, bloodworkDatabase_1.initializeBloodworkTables)();
     console.log('📊 Initializing Custom Dashboard tables...');
-    const { CustomDashboardDao } = await Promise.resolve().then(() => __importStar(require('./database/customDashboardDao')));
-    const customDashboardDao = new CustomDashboardDao();
-    await customDashboardDao.initializeTables();
+    try {
+        const { CustomDashboardDao } = await Promise.resolve().then(() => __importStar(require('./database/customDashboardDao')));
+        const customDashboardDao = new CustomDashboardDao();
+        await customDashboardDao.initializeTables();
+        console.log('✅ Custom Dashboard tables initialized');
+    }
+    catch (error) {
+        console.error('❌ Error initializing custom dashboard tables:', error);
+        console.log('⚠️ Custom Dashboard database unavailable, continuing without it');
+    }
     // Create Express app
     const app = (0, express_1.default)();
     // Security middleware

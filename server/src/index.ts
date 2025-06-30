@@ -45,9 +45,15 @@ async function startServer() {
   await initializeBloodworkTables()
 
   console.log('📊 Initializing Custom Dashboard tables...')
-  const { CustomDashboardDao } = await import('./database/customDashboardDao')
-  const customDashboardDao = new CustomDashboardDao()
-  await customDashboardDao.initializeTables()
+  try {
+    const { CustomDashboardDao } = await import('./database/customDashboardDao')
+    const customDashboardDao = new CustomDashboardDao()
+    await customDashboardDao.initializeTables()
+    console.log('✅ Custom Dashboard tables initialized')
+  } catch (error) {
+    console.error('❌ Error initializing custom dashboard tables:', error)
+    console.log('⚠️ Custom Dashboard database unavailable, continuing without it')
+  }
 
   // Create Express app
   const app = express()
