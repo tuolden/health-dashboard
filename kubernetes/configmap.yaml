@@ -16,8 +16,8 @@ data:
   VITE_GRAPHQL_WS_URL: "wss://api.dashboard.home/graphql"
   
   # Deployment tracking
-  DEPLOYMENT_VERSION: "v-2025-06-26-16-28-3140f0a6"
-  DEPLOYMENT_TIMESTAMP: "2025-06-26T16:28:59Z"
+  DEPLOYMENT_VERSION: "v-2025-06-30-11-33-fb7eeb42"
+  DEPLOYMENT_TIMESTAMP: "2025-06-30T11:33:30Z"
   
   # Widget configuration
   WIDGET_CATEGORIES: "cpap,workout,scale"

@@ -25,7 +25,7 @@ labels:
 # Common annotations for ArgoCD tracking
 commonAnnotations:
   argocd.argoproj.io/sync-wave: "1"
-  deployment.kubernetes.io/revision: "v-2025-06-26-16-28-3140f0a6"
+  deployment.kubernetes.io/revision: "v-2025-06-30-11-33-fb7eeb42"
 
 # Force image updates on deployment
 images:
